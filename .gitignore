@@ -1,0 +1,10 @@
+
+# IDEs
+.vscode/
+.idea/
+
+# Local Configs
+config/db_local.php
+
+# Logs
+error_log
