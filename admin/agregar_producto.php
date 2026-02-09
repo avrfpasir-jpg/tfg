@@ -10,9 +10,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $precio = $_POST['precio'];
     $stock = $_POST['stock'];
     $categoria_id = $_POST['categoria_id'];
+    $imagen = null;
 
-    $stmt = $conexion->prepare("INSERT INTO productos (nombre, descripcion, precio, stock, categoria_id) VALUES (?, ?, ?, ?, ?)");
-    if ($stmt->execute([$nombre, $descripcion, $precio, $stock, $categoria_id])) {
+    // Manejo de imagen
+    if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
+        $ext = pathinfo($_FILES['imagen']['name'], PATHINFO_EXTENSION);
+        $allowed = ['jpg', 'jpeg', 'png', 'webp'];
+
+        if (in_array(strtolower($ext), $allowed)) {
+            $filename = uniqid() . "." . $ext;
+            if (move_uploaded_file($_FILES['imagen']['tmp_name'], "../uploads/" . $filename)) {
+                $imagen = $filename;
+            }
+        }
+    }
+
+    $stmt = $conexion->prepare("INSERT INTO productos (nombre, descripcion, precio, stock, categoria_id, imagen) VALUES (?, ?, ?, ?, ?, ?)");
+    if ($stmt->execute([$nombre, $descripcion, $precio, $stock, $categoria_id, $imagen])) {
         header("Location: index.php");
         exit();
     }
@@ -33,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <h3>Agregar Producto</h3>
             </div>
             <div class="card-body">
-                <form method="POST">
+                <form method="POST" enctype="multipart/form-data">
                     <div class="mb-3">
                         <label>Nombre</label>
                         <input type="text" name="nombre" class="form-control" required>
@@ -59,6 +73,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </option>
                             <?php endforeach; ?>
                         </select>
+                    </div>
+                    <div class="mb-3">
+                        <label>Imagen del Producto</label>
+                        <input type="file" name="imagen" class="form-control" accept="image/*">
                     </div>
                     <button type="submit" class="btn btn-success">Guardar</button>
                     <a href="index.php" class="btn btn-secondary">Cancelar</a>

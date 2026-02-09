@@ -23,9 +23,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $precio = $_POST['precio'];
     $stock = $_POST['stock'];
     $categoria_id = $_POST['categoria_id'];
+    $imagen = $producto['imagen']; // Por defecto mantener la actual
 
-    $stmt = $conexion->prepare("UPDATE productos SET nombre=?, descripcion=?, precio=?, stock=?, categoria_id=? WHERE id=?");
-    if ($stmt->execute([$nombre, $descripcion, $precio, $stock, $categoria_id, $id])) {
+    // Manejo de nueva imagen
+    if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
+        $ext = pathinfo($_FILES['imagen']['name'], PATHINFO_EXTENSION);
+        $allowed = ['jpg', 'jpeg', 'png', 'webp'];
+
+        if (in_array(strtolower($ext), $allowed)) {
+            $filename = uniqid() . "." . $ext;
+            if (move_uploaded_file($_FILES['imagen']['tmp_name'], "../uploads/" . $filename)) {
+                // Opcional: Borrar imagen anterior si existe
+                if ($producto['imagen'] && file_exists("../uploads/" . $producto['imagen'])) {
+                    @unlink("../uploads/" . $producto['imagen']);
+                }
+                $imagen = $filename;
+            }
+        }
+    }
+
+    $stmt = $conexion->prepare("UPDATE productos SET nombre=?, descripcion=?, precio=?, stock=?, categoria_id=?, imagen=? WHERE id=?");
+    if ($stmt->execute([$nombre, $descripcion, $precio, $stock, $categoria_id, $imagen, $id])) {
         header("Location: index.php");
         exit();
     }
@@ -46,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <h3>Editar Producto</h3>
             </div>
             <div class="card-body">
-                <form method="POST">
+                <form method="POST" enctype="multipart/form-data">
                     <div class="mb-3">
                         <label>Nombre</label>
                         <input type="text" name="nombre" class="form-control"
@@ -76,6 +94,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </option>
                             <?php endforeach; ?>
                         </select>
+                    </div>
+                    <div class="mb-3">
+                        <label>Imagen Actual</label><br>
+                        <?php if ($producto['imagen']): ?>
+                            <img src="../uploads/<?= $producto['imagen'] ?>" width="100" class="mb-2 rounded shadow-sm">
+                        <?php else: ?>
+                            <span class="text-muted">Sin imagen</span>
+                        <?php endif; ?>
+                    </div>
+                    <div class="mb-3">
+                        <label>Cambiar Imagen</label>
+                        <input type="file" name="imagen" class="form-control" accept="image/*">
                     </div>
                     <button type="submit" class="btn btn-primary">Actualizar</button>
                     <a href="index.php" class="btn btn-secondary">Cancelar</a>

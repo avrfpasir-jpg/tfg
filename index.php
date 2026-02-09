@@ -49,7 +49,18 @@ $productos = $stmt->fetchAll();
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">Tienda Segura (TFG)</a>
-            <div class="d-flex">
+            <div class="d-flex align-items-center">
+                <a href="carrito.php" class="btn btn-outline-light btn-sm me-3 position-relative">
+                    🛒 Carrito
+                    <?php 
+                    $cart_count = isset($_SESSION['cart']) ? array_sum($_SESSION['cart']) : 0;
+                    if ($cart_count > 0): 
+                    ?>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            <?= $cart_count ?>
+                        </span>
+                    <?php endif; ?>
+                </a>
                 <span class="navbar-text me-3 text-light">Hola,
                     <?php echo htmlspecialchars($_SESSION['username']); ?>
                 </span>
@@ -76,7 +87,16 @@ $productos = $stmt->fetchAll();
         <div class="row">
             <?php foreach ($productos as $prod): ?>
                 <div class="col-md-4 mb-3">
-                    <div class="card h-100">
+                    <div class="card h-100 shadow-sm">
+                        <?php if ($prod['imagen']): ?>
+                            <img src="uploads/<?= $prod['imagen'] ?>" class="card-img-top"
+                                alt="<?= htmlspecialchars($prod['nombre']) ?>" style="height: 200px; object-fit: cover;">
+                        <?php else: ?>
+                            <div class="bg-secondary text-white d-flex align-items-center justify-content-center"
+                                style="height: 200px;">
+                                <span>Sin imagen</span>
+                            </div>
+                        <?php endif; ?>
                         <div class="card-body">
                             <h5 class="card-title">
                                 <?php echo htmlspecialchars($prod['nombre']); ?>
@@ -88,10 +108,11 @@ $productos = $stmt->fetchAll();
                                 <?php echo htmlspecialchars($prod['descripcion']); ?>
                             </p>
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="h5 mb-0">
+                                <span class="h5 mb-0 text-primary">
                                     <?php echo number_format($prod['precio'], 2); ?> €
                                 </span>
-                                <button class="btn btn-primary btn-sm">Comprar</button>
+                                <a href="actions/cart_add.php?id=<?= $prod['id'] ?>" class="btn btn-primary btn-sm">🛒
+                                    Añadir</a>
                             </div>
                         </div>
                     </div>
