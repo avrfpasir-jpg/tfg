@@ -8,3 +8,13 @@ config/db_local.php
 
 # Logs
 error_log
+*.log
+
+# Uploads
+uploads/
+!uploads/.gitkeep
+
+# OS Files
+Thumbs.db
+Desktop.ini
+.DS_Store

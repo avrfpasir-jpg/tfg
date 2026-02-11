@@ -3,7 +3,6 @@ session_start();
 include 'conexion.php';
 include 'seguridad.php';
 
-
 if (isset($_SESSION['user_id'])) {
     header("Location: index.php");
     exit();
@@ -41,49 +40,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+
+$pageTitle = "Registro";
+include 'includes/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="es">
 
-<head>
-    <meta charset="UTF-8">
-    <title>Registro - Tienda Segura</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+<div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="col-md-4">
+        <div class="card p-5">
+            <h3 class="fw-black mb-4 text-uppercase">// NEW_NODE_REG</h3>
+            <?php if ($error): ?>
+                <div class="bg-danger text-white p-3 mb-4 fw-bold">[FAIL] <?= htmlspecialchars($error) ?></div>
+            <?php endif; ?>
+            <?php if ($success): ?>
+                <div class="bg-success text-white p-3 mb-4 fw-bold">[OK] <?= htmlspecialchars($success) ?></div>
+            <?php endif; ?>
 
-<body class="bg-light d-flex justify-content-center align-items-center vh-100">
-    <div class="card p-4 shadow" style="width: 400px;">
-        <h3 class="text-center mb-3">Registro</h3>
-        <?php if ($error): ?>
-            <div class="alert alert-danger">
-                <?php echo $error; ?>
+            <form method="POST">
+                <div class="mb-4">
+                    <label class="small fw-bold mb-2 text-uppercase">USR_TAG //</label>
+                    <input type="text" name="username" class="form-control" required placeholder="...">
+                </div>
+                <div class="mb-4">
+                    <label class="small fw-bold mb-2 text-uppercase">EMAIL_ADDR //</label>
+                    <input type="email" name="email" class="form-control" required placeholder="...">
+                </div>
+                <div class="mb-5">
+                    <label class="small fw-bold mb-2 text-uppercase">PASS_CODE //</label>
+                    <input type="password" name="password" class="form-control" required placeholder="...">
+                </div>
+                <button type="submit" class="btn btn-primary w-100 py-3">EXEC_REGISTER</button>
+            </form>
+            <div class="mt-3 text-center">
+                <a href="login.php">Volver al Login</a>
             </div>
-        <?php endif; ?>
-        <?php if ($success): ?>
-            <div class="alert alert-success">
-                <?php echo $success; ?>
-            </div>
-        <?php endif; ?>
-
-        <form method="POST">
-            <div class="mb-3">
-                <label>Usuario</label>
-                <input type="text" name="username" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label>Email</label>
-                <input type="email" name="email" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label>Contraseña</label>
-                <input type="password" name="password" class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-success w-100">Registrarse</button>
-        </form>
-        <div class="mt-3 text-center">
-            <a href="login.php">Volver al Login</a>
         </div>
     </div>
-</body>
+</div>
 
-</html>
+<?php include 'includes/footer.php'; ?>

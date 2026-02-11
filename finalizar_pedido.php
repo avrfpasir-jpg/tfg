@@ -65,39 +65,37 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
         $error = "Error al procesar el pedido: " . $e->getMessage();
     }
 }
+
+$pageTitle = "Pedido Finalizado";
+include 'includes/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="es">
 
-<head>
-    <meta charset="UTF-8">
-    <title>Pedido - Tienda Segura</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-
-<body class="bg-light d-flex align-items-center vh-100">
-    <div class="container text-center">
+<div class="row justify-content-center">
+    <div class="col-md-6 text-center">
         <?php if ($success): ?>
-            <div class="card p-5 shadow mx-auto" style="max-width: 500px;">
-                <h1 class="display-1 text-success">✅</h1>
-                <h2 class="mb-3">¡Gracias por tu compra!</h2>
-                <p class="text-muted">Tu pedido #<?= $pedido_id ?> ha sido procesado correctamente y el stock actualizado.
-                </p>
-                <a href="index.php" class="btn btn-primary mt-4">Volver al inicio</a>
+            <div class="bg-white border border-4 border-dark p-5 shadow-lg position-relative"
+                style="box-shadow: 10px 10px 0px var(--acid-green);">
+                <div class="display-1 mb-4">🆗</div>
+                <h2 class="fw-black text-uppercase mb-3">#ORDER_SUCCESSFUL</h2>
+                <p class="fs-5 mb-4 font-monospace">Tu pedido #<?= $pedido_id ?> ha sido inyectado en la red de envíos
+                    correctamente.</p>
+                <div class="border-top border-dark pt-4 mt-4">
+                    <a href="index.php" class="btn btn-primary btn-lg px-5">RETURN_TO_BASE</a>
+                </div>
             </div>
         <?php elseif ($error): ?>
-            <div class="card p-5 shadow mx-auto" style="max-width: 500px;">
-                <h1 class="display-1 text-danger">⚠️</h1>
-                <h2 class="mb-3">Ups... Algo salió mal</h2>
-                <div class="alert alert-danger"><?= $error ?></div>
-                <a href="carrito.php" class="btn btn-outline-primary mt-2">Volver al carrito</a>
+            <div class="bg-black text-white border border-4 border-danger p-5 shadow-lg">
+                <div class="display-1 mb-4 text-danger">⚠️</div>
+                <h2 class="fw-black text-uppercase mb-3">#SYSTEM_FAILURE</h2>
+                <div class="bg-danger text-white p-3 mb-4 fw-bold font-monospace"><?= $error ?></div>
+                <a href="carrito.php" class="btn btn-outline-light mt-2">RELOAD_CART</a>
             </div>
         <?php else: ?>
-            <div class="alert alert-danger d-inline-block">No hay un pedido activo.</div>
+            <div class="alert alert-danger">No hay un pedido activo.</div>
             <br>
             <a href="index.php" class="btn btn-secondary mt-2">Volver</a>
         <?php endif; ?>
     </div>
-</body>
+</div>
 
-</html>
+<?php include 'includes/footer.php'; ?>
