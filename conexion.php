@@ -1,15 +1,21 @@
 <?php
+// conexion.php - Simple database connection
 $host = 'localhost';
-$usuario = 'root';
-$password = '';
-$bd = 'tienda_segura';
+$db = 'tienda_segura';
+$user = 'root';
+$pass = '';
+$charset = 'utf8mb4';
+
+$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+$options = [
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    PDO::ATTR_EMULATE_PREPARES => false,
+];
 
 try {
-    $conexion = new PDO("mysql:host=$host;dbname=$bd;charset=utf8", $usuario, $password);
-    $conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $conexion->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    // En producción no mostraríamos el error real, pero en dev sí
-    die("Error crítico de conexión: " . $e->getMessage());
+    $conexion = new PDO($dsn, $user, $pass, $options);
+} catch (\PDOException $e) {
+    throw new \PDOException($e->getMessage(), (int) $e->getCode());
 }
 ?>
