@@ -46,11 +46,13 @@ if (!isset($_SESSION['cart']) || empty($_SESSION['cart'])) {
                                                         📷</div>
                                                 <?php endif; ?>
                                             </div>
-                                            <div>
+                                            <div class="flex-grow-1">
                                                 <span class="fw-bold d-block"><?= htmlspecialchars($item['nombre']) ?></span>
                                                 <span class="text-muted small"><?= number_format($item['precio'], 2) ?> € /
                                                     ud.</span>
                                             </div>
+                                            <a href="actions/cart_clear.php?id=<?= $item['id'] ?>"
+                                                class="text-danger ms-3 text-decoration-none" title="Quitar">✕</a>
                                         </div>
                                     </td>
                                     <td class="text-center py-3">
@@ -65,7 +67,11 @@ if (!isset($_SESSION['cart']) || empty($_SESSION['cart'])) {
                     </table>
                 </div>
             </div>
-            <a href="index.php" class="btn btn-link text-dark fw-bold text-decoration-none p-0">← Seguir comprando</a>
+            <div class="d-flex justify-content-between">
+                <a href="index.php" class="btn btn-link text-dark fw-bold text-decoration-none p-0">← Seguir comprando</a>
+                <a href="actions/cart_clear.php" class="text-muted small text-decoration-none"
+                    onclick="return confirm('¿Vaciar todo el carrito?')">Vaciar carrito</a>
+            </div>
         </div>
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm p-4 mt-5 mt-lg-0 sticky-top" style="top: 2rem;">

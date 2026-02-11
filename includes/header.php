@@ -115,4 +115,13 @@ include 'conexion.php';
             </div>
         </div>
     </nav>
+
     <div class="container pb-5">
+        <?php if (isset($_SESSION['mensaje'])): ?>
+            <div class="alert alert-<?= $_SESSION['mensaje_tipo'] ?? 'info' ?> alert-dismissible fade show border-0 shadow-sm mb-4"
+                role="alert">
+                <?= $_SESSION['mensaje'] ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <?php unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']); ?>
+        <?php endif; ?>
