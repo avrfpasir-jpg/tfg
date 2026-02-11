@@ -8,14 +8,7 @@ if ($id) {
         $_SESSION['cart'] = [];
     }
 
-    // Límite de seguridad: máximo 100 items distintos o cantidad exagerada
-    if (count($_SESSION['cart']) >= 50 && !isset($_SESSION['cart'][$id])) {
-        // Bloquear nuevos items si ya hay 50 distintos
-        header("Location: " . ($_SERVER['HTTP_REFERER'] ?: '../index.php'));
-        exit();
-    }
-
-    // Incrementar cantidad
+    // Añadir o incrementar
     if (isset($_SESSION['cart'][$id])) {
         $_SESSION['cart'][$id]++;
     } else {
@@ -23,7 +16,7 @@ if ($id) {
     }
 }
 
-// Redirigir de vuelta (o al carrito)
+// Volver a la página anterior o al inicio
 header("Location: " . ($_SERVER['HTTP_REFERER'] ?: '../index.php'));
 exit();
 ?>

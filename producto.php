@@ -15,26 +15,40 @@ $pageTitle = $p['nombre'];
 ?>
 
 <div class="row mt-5">
-    <div class="col-md-6">
-        <div class="border border-3 border-dark p-2 bg-white">
-            <?php if ($p['imagen']): ?>
-                <img src="uploads/<?= $p['imagen'] ?>" class="img-fluid w-100">
-            <?php else: ?>
-                <div class="bg-secondary text-white d-flex align-items-center justify-content-center"
-                    style="height: 400px;">
-                    <span>Sin Imagen</span>
-                </div>
-            <?php endif; ?>
+    <div class="col-md-6 mb-4">
+        <div class="card border-0 shadow-sm p-3">
+            <div class="product-img-wrapper" style="height: 500px; border-radius: 4px;">
+                <?php if ($p['imagen']): ?>
+                    <img src="uploads/<?= $p['imagen'] ?>" class="img-fluid w-100 h-100" style="object-fit: contain;">
+                <?php else: ?>
+                    <div class="text-muted d-flex flex-column align-items-center">
+                        <span style="font-size: 3rem;">📷</span>
+                        <span class="fw-bold">IMAGEN NO DISPONIBLE</span>
+                    </div>
+                <?php endif; ?>
+            </div>
         </div>
     </div>
-    <div class="col-md-6">
-        <h1 class="display-4 fw-black"><?= htmlspecialchars($p['nombre']) ?></h1>
-        <h3 class="text-muted mb-4"><?= number_format($p['precio'], 2) ?> €</h3>
-        <p class="lead mb-5"><?= nl2br(htmlspecialchars($p['descripcion'])) ?></p>
+    <div class="col-md-6 ps-md-5">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.php" class="text-dark">Catálogo</a></li>
+                <li class="breadcrumb-item active"><?= htmlspecialchars($p['nombre']) ?></li>
+            </ol>
+        </nav>
+        <h1 class="display-4 fw-black mb-2 text-uppercase"><?= htmlspecialchars($p['nombre']) ?></h1>
+        <p class="display-6 price-tag mb-4"><?= number_format($p['precio'], 2) ?> €</p>
 
-        <a href="actions/cart_add.php?id=<?= $p['id'] ?>" class="btn btn-primary btn-lg px-5 py-3">
-            COMPRAR AHORA
-        </a>
+        <div class="mb-5 pb-4 border-bottom">
+            <h6 class="text-uppercase fw-bold text-muted mb-3">Descripción</h6>
+            <p class="lead" style="color: #444;"><?= nl2br(htmlspecialchars($p['descripcion'])) ?></p>
+        </div>
+
+        <div class="d-grid">
+            <a href="actions/cart_add.php?id=<?= $p['id'] ?>" class="btn btn-primary btn-lg px-5 py-3 shadow-sm">
+                Añadir al Carrito
+            </a>
+        </div>
     </div>
 </div>
 
