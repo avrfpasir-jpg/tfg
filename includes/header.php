@@ -10,7 +10,7 @@ include 'conexion.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $pageTitle ?? 'Tienda Segura' ?></title>
+    <title><?= $pageTitle ?? 'PSICOPOMPO' ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -92,21 +92,60 @@ include 'conexion.php';
         .product-img-wrapper {
             background-color: var(--gray-medium);
             aspect-ratio: 1 / 1;
+            width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            text-decoration: none;
         }
     </style>
 </head>
 
 <body>
+    <?php
+    $cart_count = 0;
+    if (isset($_SESSION['cart'])) {
+        foreach ($_SESSION['cart'] as $qty)
+            $cart_count += $qty;
+    }
+    ?>
     <nav class="navbar navbar-expand-lg mb-5">
         <div class="container text-center">
-            <a class="navbar-brand mx-auto" href="index.php">Tienda Segura</a>
-            <div class="d-flex gap-3">
-                <a href="index.php" class="nav-link">Catálogo</a>
-                <a href="carrito.php" class="nav-link">Carrito</a>
+            <a class="navbar-brand mx-auto" href="index.php">PSICOPOMPO</a>
+            <div class="d-flex gap-3 align-items-center">
+                <?php if (!isset($_SESSION['es_admin']) || !$_SESSION['es_admin']): ?>
+                    <a href="carrito.php" class="nav-link">
+                        Carrito <?= $cart_count > 0 ? "<span class='badge bg-dark ms-1'>$cart_count</span>" : "" ?>
+                    </a>
+                <?php endif; ?>
+
+                <?php if (isset($_SESSION['user_id']) && (!isset($_SESSION['es_admin']) || !$_SESSION['es_admin'])): ?>
+                    <div class="nav-item dropdown px-2">
+                        <a class="nav-link dropdown-toggle" href="#" id="userMenu" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Mi Cuenta
+                        </a>
+                        <ul class="dropdown-menu border-0 shadow-sm" aria-labelledby="userMenu">
+                            <li><a class="dropdown-item small fw-bold" href="mis_pedidos.php">MIS PEDIDOS</a></li>
+                            <li><a class="dropdown-item small fw-bold" href="mi_perfil.php">MI PERFIL</a></li>
+                        </ul>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (isset($_SESSION['es_admin']) && $_SESSION['es_admin']): ?>
+                    <div class="nav-item dropdown px-2">
+                        <a class="nav-link dropdown-toggle text-primary" href="#" id="adminMenu" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Admin
+                        </a>
+                        <ul class="dropdown-menu border-0 shadow-sm" aria-labelledby="adminMenu">
+                            <li><a class="dropdown-item small fw-bold" href="admin_productos.php">GESTIÓN PRODUCTOS</a></li>
+                            <li><a class="dropdown-item small fw-bold" href="admin_usuarios.php">GESTIÓN USUARIOS</a></li>
+                        </ul>
+                    </div>
+                <?php endif; ?>
+
                 <?php if (isset($_SESSION['user_id'])): ?>
                     <a href="logout.php" class="nav-link text-danger">Salir</a>
                 <?php else: ?>

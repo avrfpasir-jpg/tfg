@@ -36,7 +36,7 @@ try {
     }
 
     // 2. Crear pedido
-    $stmt = $conexion->prepare("INSERT INTO pedidos (usuario_id, total, estado) VALUES (?, ?, 'completado')");
+    $stmt = $conexion->prepare("INSERT INTO pedidos (usuario_id, total) VALUES (?, ?)");
     $stmt->execute([$_SESSION['user_id'], $total]);
     $pedido_id = $conexion->lastInsertId();
 
@@ -50,15 +50,24 @@ try {
     }
 
     $conexion->commit();
+
+    // Registrar el pedido en los logs
+    include_once 'includes/seguridad.php';
+    registrar_evento($conexion, 'NUEVO_PEDIDO', "Orden #$pedido_id | Usuario: " . $_SESSION['username'] . " | Total: " . number_format($total, 2) . "€", 1);
+
     unset($_SESSION['cart']);
     $_SESSION['mensaje'] = "¡Pedido #$pedido_id realizado con éxito!";
     $_SESSION['mensaje_tipo'] = "success";
     $exito = true;
 
 } catch (Exception $e) {
-    if ($conexion->inTransaction()) {
+    if ($conexion && $conexion->inTransaction()) {
         $conexion->rollBack();
     }
+
+    include_once 'includes/seguridad.php';
+    registrar_evento($conexion, 'ERROR_PEDIDO', "Error: " . $e->getMessage() . " | Usuario: " . ($_SESSION['username'] ?? 'invitado'), 3);
+
     $error_msg = $e->getMessage();
     $exito = false;
 }

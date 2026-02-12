@@ -1,4 +1,4 @@
-# Tienda Segura
+# PSICOPOMPO
 
 Este proyecto es una aplicación web de comercio electrónico desarrollada en PHP con conexión a base de datos MySQL.
 

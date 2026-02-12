@@ -32,7 +32,7 @@ $pageTitle = $p['nombre'];
     <div class="col-md-6 ps-md-5">
         <nav aria-label="breadcrumb" class="mb-4">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="index.php" class="text-dark">Catálogo</a></li>
+                <li class="breadcrumb-item"><a href="index.php" class="text-dark">Inicio</a></li>
                 <li class="breadcrumb-item active"><?= htmlspecialchars($p['nombre']) ?></li>
             </ol>
         </nav>

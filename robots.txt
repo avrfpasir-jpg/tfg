@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /admin_logs.php
+Disallow: /admin_productos.php
+Disallow: /admin_editar.php
+Disallow: /admin_usuarios.php
+Disallow: /conexion.php
+Disallow: /includes/

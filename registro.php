@@ -4,8 +4,8 @@ include 'includes/header.php';
 
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'];
-    $email = $_POST['email'];
+    $username = trim($_POST['username']);
+    $email = trim($_POST['email']);
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
     try {
@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: login.php");
         exit();
     } catch (Exception $e) {
-        $error = "El nombre de usuario o email ya existe.";
+        $error = "El usuario o correo ya existe.";
     }
 }
 ?>
@@ -24,28 +24,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="card p-4">
             <h2 class="fw-black mb-4">REGISTRO</h2>
             <?php if ($error): ?>
-                <div class="alert alert-danger"><?= $error ?></div>
+                <div class="alert alert-danger px-3 py-2 small"><?= $error ?></div>
             <?php endif; ?>
             <form method="POST">
                 <div class="mb-3">
-                    <label class="form-label fw-bold">Usuario</label>
-                    <input type="text" name="username" class="form-control" required>
+                    <label class="form-label fw-bold small text-uppercase">Usuario</label>
+                    <input type="text" name="username" class="form-control" required autocomplete="off">
                 </div>
                 <div class="mb-3">
-                    <label class="form-label fw-bold">Email</label>
+                    <label class="form-label fw-bold small text-uppercase">Correo Electrónico</label>
                     <input type="email" name="email" class="form-control" required>
                 </div>
                 <div class="mb-4">
-                    <label class="form-label fw-bold">Contraseña</label>
+                    <label class="form-label fw-bold small text-uppercase">Contraseña</label>
                     <input type="password" name="password" class="form-control" required>
                 </div>
                 <button type="submit" class="btn btn-primary w-100 py-3">CREAR CUENTA</button>
-                <div class="text-center mt-3">
-                    <a href="login.php" class="text-dark small">Ya tengo cuenta</a>
+                <div class="text-center mt-4">
+                    <a href="login.php" class="text-muted small text-decoration-none">Ya tengo cuenta →</a>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<?php include 'includes/header.php'; ?>
+<?php include 'includes/footer.php'; ?>

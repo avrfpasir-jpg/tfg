@@ -1,10 +1,11 @@
 <?php
 $pageTitle = "Entrar";
 include 'includes/header.php';
+include 'includes/seguridad.php';
 
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'];
+    $username = trim($_POST['username']);
     $password = $_POST['password'];
 
     $stmt = $conexion->prepare("SELECT * FROM usuarios WHERE username = ?");
@@ -12,11 +13,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = $stmt->fetch();
 
     if ($user && password_verify($password, $user['password_hash'])) {
+        session_regenerate_id(true);
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['username'] = $user['username'];
+        $_SESSION['es_admin'] = $user['es_admin'];
+        registrar_evento($conexion, 'LOGIN_EXITOSO', "Usuario: $username", 1);
         header("Location: index.php");
         exit();
     } else {
+        registrar_evento($conexion, 'LOGIN_FALLIDO', "Intento con usuario: $username", 3);
         $error = "Usuario o contraseña incorrectos.";
     }
 }
@@ -47,4 +52,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 </div>
 
-<?php include 'includes/header.php'; ?>
+<?php include 'includes/footer.php'; ?>
