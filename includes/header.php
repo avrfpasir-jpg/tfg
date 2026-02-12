@@ -99,6 +99,47 @@ include 'conexion.php';
             overflow: hidden;
             text-decoration: none;
         }
+
+        /* Floating Alerts Styling */
+        .alert-floating {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 9999;
+            min-width: 300px;
+            max-width: 450px;
+            border: none;
+            border-left: 5px solid var(--pitch-black);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            animation: slideInRight 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            background: var(--pure-white);
+            color: var(--pitch-black);
+            font-weight: 600;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .alert-success {
+            border-left-color: #28a745 !important;
+        }
+
+        .alert-danger {
+            border-left-color: #dc3545 !important;
+        }
+
+        .alert-warning {
+            border-left-color: #ffc107 !important;
+        }
     </style>
 </head>
 
@@ -142,6 +183,11 @@ include 'conexion.php';
                         <ul class="dropdown-menu border-0 shadow-sm" aria-labelledby="adminMenu">
                             <li><a class="dropdown-item small fw-bold" href="admin_productos.php">GESTIÓN PRODUCTOS</a></li>
                             <li><a class="dropdown-item small fw-bold" href="admin_usuarios.php">GESTIÓN USUARIOS</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item small fw-bold text-warning" href="admin_logs.php">LOGS DE
+                                    SEGURIDAD</a></li>
                         </ul>
                     </div>
                 <?php endif; ?>
@@ -157,10 +203,29 @@ include 'conexion.php';
 
     <div class="container pb-5">
         <?php if (isset($_SESSION['mensaje'])): ?>
-            <div class="alert alert-<?= $_SESSION['mensaje_tipo'] ?? 'info' ?> alert-dismissible fade show border-0 shadow-sm mb-4"
-                role="alert">
-                <?= $_SESSION['mensaje'] ?>
+            <div class="alert alert-floating alert-<?= $_SESSION['mensaje_tipo'] ?? 'info' ?> alert-dismissible fade show border-0 shadow-sm mb-4" role="alert">
+                <div class="d-flex align-items-center">
+                    <span class="me-3 fs-3">
+                        <?php
+                        $icon = 'ℹ️';
+                        if ($_SESSION['mensaje_tipo'] === 'success') $icon = '✅';
+                        if ($_SESSION['mensaje_tipo'] === 'danger') $icon = '❌';
+                        if ($_SESSION['mensaje_tipo'] === 'warning') $icon = '⚠️';
+                        echo $icon;
+                        ?>
+                    </span>
+                    <div><?= $_SESSION['mensaje'] ?></div>
+                </div>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
+            <script>
+                setTimeout(() => {
+                    const alertEl = document.querySelector('.alert-floating');
+                    if (alertEl) {
+                        const bsAlert = new bootstrap.Alert(alertEl);
+                        bsAlert.close();
+                    }
+                }, 5000);
+            </script>
             <?php unset($_SESSION['mensaje'], $_SESSION['mensaje_tipo']); ?>
         <?php endif; ?>

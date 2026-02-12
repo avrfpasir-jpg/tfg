@@ -73,33 +73,42 @@ $logs = $stmt->fetchAll();
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($logs as $log):
-                $riesgo_class = 'bg-success';
-                if ($log['evento'] === 'NUEVO_PEDIDO')
-                    $riesgo_class = 'bg-info text-dark';
-                if ($log['nivel_riesgo'] >= 3)
-                    $riesgo_class = 'bg-warning text-dark';
-                if ($log['nivel_riesgo'] >= 5)
-                    $riesgo_class = 'bg-danger';
-                ?>
+            <?php if (empty($logs)): ?>
                 <tr>
-                    <td class="px-4 text-muted small">
-                        <?= $log['fecha'] ?>
-                    </td>
-                    <td><span class="fw-bold">
-                            <?= htmlspecialchars($log['evento']) ?>
-                        </span></td>
-                    <td class="small">
-                        <?= htmlspecialchars($log['detalles']) ?>
-                    </td>
-                    <td class="text-center px-4">
-                        <span class="badge <?= $riesgo_class ?> px-3">
-                            Nivel
-                            <?= $log['nivel_riesgo'] ?>
-                        </span>
+                    <td colspan="4" class="text-center py-5 text-muted">
+                        <div class="fs-1 mb-3">🔍</div>
+                        <p class="mb-0">No se han encontrado logs que coincidan con los filtros.</p>
                     </td>
                 </tr>
-            <?php endforeach; ?>
+            <?php else: ?>
+                <?php foreach ($logs as $log):
+                    $riesgo_class = 'bg-success';
+                    if ($log['evento'] === 'NUEVO_PEDIDO')
+                        $riesgo_class = 'bg-info text-dark';
+                    if ($log['nivel_riesgo'] >= 3)
+                        $riesgo_class = 'bg-warning text-dark';
+                    if ($log['nivel_riesgo'] >= 5)
+                        $riesgo_class = 'bg-danger';
+                    ?>
+                    <tr>
+                        <td class="px-4 text-muted small">
+                            <?= $log['fecha'] ?>
+                        </td>
+                        <td><span class="fw-bold">
+                                <?= htmlspecialchars($log['evento']) ?>
+                            </span></td>
+                        <td class="small">
+                            <?= htmlspecialchars($log['detalles']) ?>
+                        </td>
+                        <td class="text-center px-4">
+                            <span class="badge <?= $riesgo_class ?> px-3">
+                                Nivel
+                                <?= $log['nivel_riesgo'] ?>
+                            </span>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </tbody>
     </table>
 </div>

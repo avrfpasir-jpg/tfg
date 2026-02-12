@@ -3,7 +3,14 @@ $pageTitle = "Tu Carrito";
 include 'includes/header.php';
 
 if (!isset($_SESSION['cart']) || empty($_SESSION['cart'])) {
-    echo '<div class="text-center py-5"><h3>Tu carrito está vacío</h3><a href="index.php" class="btn btn-primary mt-3">Volver al catálogo</a></div>';
+    ?>
+    <div class="text-center py-5 my-5">
+        <div class="display-1 text-muted mb-4">🛒</div>
+        <h2 class="fw-black">TU CARRITO ESTÁ VACÍO</h2>
+        <p class="text-muted mb-5">Parece que aún no has añadido nada a tu selección.</p>
+        <a href="index.php" class="btn btn-primary btn-lg px-5">EXPLORAR CATÁLOGO</a>
+    </div>
+    <?php
 } else {
     $ids = array_keys($_SESSION['cart']);
     $placeholders = str_repeat('?,', count($ids) - 1) . '?';

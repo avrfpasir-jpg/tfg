@@ -34,6 +34,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $target_file = $target_dir . $new_name;
 
         if (move_uploaded_file($_FILES['imagen']['tmp_name'], $target_file)) {
+            // Eliminar imagen anterior si existe y es una edición
+            if ($p && $p['imagen']) {
+                $old_img = "uploads/" . $p['imagen'];
+                if (file_exists($old_img)) {
+                    unlink($old_img);
+                }
+            }
             $imagen = $new_name;
         }
     }
