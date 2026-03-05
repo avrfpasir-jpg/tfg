@@ -1,11 +1,17 @@
 <?php
-include 'includes/header.php';
-include 'includes/seguridad.php';
+include_once __DIR__ . '/../includes/conexion.php';
+include_once __DIR__ . '/../includes/seguridad.php';
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 if (!isset($_SESSION['es_admin']) || !$_SESSION['es_admin']) {
-    header("Location: index.php");
+    header("Location: ../index.php");
     exit();
 }
+
+include '../includes/header.php';
 
 $user_filter = $_GET['usuario'] ?? null;
 $event_filter = $_GET['evento'] ?? null;
@@ -37,7 +43,7 @@ $logs = $stmt->fetchAll();
     <h2 class="fw-black m-0">LOGS DE SEGURIDAD</h2>
     <div class="d-flex align-items-center gap-2">
         <?php if ($user_filter || $event_filter): ?>
-            <a href="admin_logs.php" class="btn btn-sm btn-outline-danger me-2">Limpiar Filtros</a>
+            <a href="logs.php" class="btn btn-sm btn-outline-danger me-2">Limpiar Filtros</a>
         <?php endif; ?>
 
         <form method="GET" class="d-flex gap-2 align-items-center">
@@ -114,7 +120,7 @@ $logs = $stmt->fetchAll();
 </div>
 
 <div class="mt-4">
-    <a href="admin_productos.php" class="text-muted small text-decoration-none">← Ir a gestión de productos</a>
+    <a href="productos.php" class="text-muted small text-decoration-none">← Ir a gestión de productos</a>
 </div>
 
-<?php include 'includes/footer.php'; ?>
+<?php include '../includes/footer.php'; ?>

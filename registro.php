@@ -1,6 +1,8 @@
 <?php
-$pageTitle = "Registro";
-include 'includes/header.php';
+include_once 'includes/conexion.php';
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -17,6 +19,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "El usuario o correo ya existe.";
     }
 }
+
+$pageTitle = "Registro";
+include 'includes/header.php';
 ?>
 
 <div class="row justify-content-center mt-5">

@@ -1,14 +1,17 @@
 <?php
-include 'includes/header.php';
+include_once __DIR__ . '/../includes/conexion.php';
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 if (!isset($_SESSION['es_admin']) || !$_SESSION['es_admin']) {
-    header("Location: index.php");
+    header("Location: ../index.php");
     exit();
 }
 
 $id = $_GET['id'] ?? null;
 if (!$id) {
-    header("Location: admin_usuarios.php");
+    header("Location: usuarios.php");
     exit();
 }
 
@@ -16,7 +19,6 @@ $stmt = $conexion->prepare("SELECT * FROM usuarios WHERE id = ?");
 $stmt->execute([$id]);
 $u = $stmt->fetch();
 
-$success = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $es_admin = isset($_POST['es_admin']) ? 1 : 0;
     $email = trim($_POST['email']);
@@ -25,9 +27,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute([$es_admin, $email, $id]);
 
     $_SESSION['mensaje'] = "Usuario actualizado correctamente.";
-    header("Location: admin_usuarios.php");
+    header("Location: usuarios.php");
     exit();
 }
+
+include '../includes/header.php';
 ?>
 
 <div class="row justify-content-center">
@@ -54,11 +58,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <div class="d-flex gap-3">
                     <button type="submit" class="btn btn-primary px-4">GUARDAR</button>
-                    <a href="admin_usuarios.php" class="btn btn-outline-dark">CANCELAR</a>
+                    <a href="usuarios.php" class="btn btn-outline-dark">CANCELAR</a>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<?php include 'includes/footer.php'; ?>
+<?php include '../includes/footer.php'; ?>

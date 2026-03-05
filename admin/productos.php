@@ -1,10 +1,15 @@
 <?php
-include 'includes/header.php';
+include_once __DIR__ . '/../includes/conexion.php';
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 if (!isset($_SESSION['es_admin']) || !$_SESSION['es_admin']) {
-    header("Location: index.php");
+    header("Location: ../index.php");
     exit();
 }
+
+include '../includes/header.php';
 
 $productos = $conexion->query("SELECT * FROM productos ORDER BY id DESC")->fetchAll();
 ?>
@@ -22,7 +27,7 @@ $productos = $conexion->query("SELECT * FROM productos ORDER BY id DESC")->fetch
 
 <div class="d-flex justify-content-between align-items-center mb-5">
     <h2 class="fw-black m-0">GESTIÓN DE PRODUCTOS</h2>
-    <a href="admin_editar.php" class="btn btn-primary">+ NUEVO PRODUCTO</a>
+    <a href="producto_editar.php" class="btn btn-primary">+ NUEVO PRODUCTO</a>
 </div>
 
 <div class="card border-0 shadow-sm overflow-hidden">
@@ -46,7 +51,7 @@ $productos = $conexion->query("SELECT * FROM productos ORDER BY id DESC")->fetch
                         <div class="d-flex align-items-center">
                             <div class="rounded bg-light me-3" style="width: 40px; height: 40px; overflow: hidden;">
                                 <?php if ($p['imagen']): ?>
-                                    <img src="uploads/<?= $p['imagen'] ?>" class="w-100 h-100" style="object-fit: cover;">
+                                    <img src="../uploads/<?= $p['imagen'] ?>" class="w-100 h-100" style="object-fit: cover;">
                                 <?php else: ?>
                                     <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted small">
                                         📷</div>
@@ -67,9 +72,9 @@ $productos = $conexion->query("SELECT * FROM productos ORDER BY id DESC")->fetch
                     </td>
                     <td class="text-end px-4">
                         <div class="btn-group">
-                            <a href="admin_editar.php?id=<?= $p['id'] ?>"
+                            <a href="producto_editar.php?id=<?= $p['id'] ?>"
                                 class="btn btn-sm btn-outline-dark fw-bold">EDITAR</a>
-                            <a href="actions/admin_product_delete.php?id=<?= $p['id'] ?>"
+                            <a href="../actions/admin_product_delete.php?id=<?= $p['id'] ?>"
                                 class="btn btn-sm btn-outline-danger fw-bold"
                                 onclick="return confirm('¿Estás seguro de que deseas eliminar este producto? Esta acción no se puede deshacer si el producto no tiene ventas.')">ELIMINAR</a>
                         </div>
@@ -81,7 +86,7 @@ $productos = $conexion->query("SELECT * FROM productos ORDER BY id DESC")->fetch
 </div>
 
 <div class="mt-4">
-    <a href="index.php" class="text-muted small text-decoration-none">← Volver a la tienda</a>
+    <a href="../index.php" class="text-muted small text-decoration-none">← Volver a la tienda</a>
 </div>
 
-<?php include 'includes/footer.php'; ?>
+<?php include '../includes/footer.php'; ?>

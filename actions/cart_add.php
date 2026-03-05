@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../conexion.php';
+include '../includes/conexion.php';
 
 $id = $_GET['id'] ?? null;
 

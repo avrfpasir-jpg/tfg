@@ -1,8 +1,11 @@
 <?php
-include 'includes/header.php';
+include_once __DIR__ . '/../includes/conexion.php';
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 if (!isset($_SESSION['es_admin']) || !$_SESSION['es_admin']) {
-    header("Location: index.php");
+    header("Location: ../index.php");
     exit();
 }
 
@@ -15,7 +18,6 @@ if ($id) {
     $p = $stmt->fetch();
 }
 
-$error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombre = $_POST['nombre'];
     $descripcion = $_POST['descripcion'];
@@ -25,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Gestión de imagen
     if (!empty($_FILES['imagen']['name'])) {
-        $target_dir = "uploads/";
+        $target_dir = "../uploads/";
         if (!is_dir($target_dir))
             mkdir($target_dir, 0777, true);
 
@@ -36,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (move_uploaded_file($_FILES['imagen']['tmp_name'], $target_file)) {
             // Eliminar imagen anterior si existe y es una edición
             if ($p && $p['imagen']) {
-                $old_img = "uploads/" . $p['imagen'];
+                $old_img = "../uploads/" . $p['imagen'];
                 if (file_exists($old_img)) {
                     unlink($old_img);
                 }
@@ -56,9 +58,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $_SESSION['mensaje_tipo'] = "success";
-    header("Location: admin_productos.php");
+    header("Location: productos.php");
     exit();
 }
+
+include '../includes/header.php';
 ?>
 
 <div class="row justify-content-center">
@@ -97,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <label class="form-label small fw-bold text-uppercase">Imagen del Producto</label>
                             <input type="file" name="imagen" class="form-control mb-2">
                             <?php if ($p && $p['imagen']): ?>
-                                <img src="uploads/<?= $p['imagen'] ?>" class="img-thumbnail w-100">
+                                <img src="../uploads/<?= $p['imagen'] ?>" class="img-thumbnail w-100">
                             <?php endif; ?>
                         </div>
                     </div>
@@ -105,11 +109,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <div class="pt-4 border-top mt-4 d-flex gap-3">
                     <button type="submit" class="btn btn-primary px-5">GUARDAR PRODUCTO</button>
-                    <a href="admin_productos.php" class="btn btn-outline-dark">CANCELAR</a>
+                    <a href="productos.php" class="btn btn-outline-dark">CANCELAR</a>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<?php include 'includes/footer.php'; ?>
+<?php include '../includes/footer.php'; ?>

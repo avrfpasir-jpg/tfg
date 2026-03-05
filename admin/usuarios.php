@@ -1,10 +1,15 @@
 <?php
-include 'includes/header.php';
+include_once __DIR__ . '/../includes/conexion.php';
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 if (!isset($_SESSION['es_admin']) || !$_SESSION['es_admin']) {
-    header("Location: index.php");
+    header("Location: ../index.php");
     exit();
 }
+
+include '../includes/header.php';
 
 $usuarios = $conexion->query("SELECT id, username, email, es_admin FROM usuarios ORDER BY id DESC")->fetchAll();
 ?>
@@ -53,12 +58,11 @@ $usuarios = $conexion->query("SELECT id, username, email, es_admin FROM usuarios
                     </td>
                     <td class="text-end px-4">
                         <div class="btn-group">
-                            <a href="admin_logs.php?usuario=<?= urlencode($u['username']) ?>"
-                                class="btn btn-sm btn-outline-dark" title="Ver Logs">📜</a>
-                            <a href="admin_usuario_editar.php?id=<?= $u['id'] ?>" class="btn btn-sm btn-outline-dark"
+                            <a href="usuario_editar.php?id=<?= $u['id'] ?>" class="btn btn-sm btn-outline-dark"
                                 title="Editar">✏️</a>
                             <?php if ($u['id'] != $_SESSION['user_id']): ?>
-                                <a href="actions/admin_user_delete.php?id=<?= $u['id'] ?>" class="btn btn-sm btn-outline-danger"
+                                <a href="../actions/admin_user_delete.php?id=<?= $u['id'] ?>"
+                                    class="btn btn-sm btn-outline-danger"
                                     onclick="return confirm('¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.')"
                                     title="Eliminar">🗑️</a>
                             <?php endif; ?>
@@ -71,7 +75,7 @@ $usuarios = $conexion->query("SELECT id, username, email, es_admin FROM usuarios
 </div>
 
 <div class="mt-4">
-    <a href="admin_productos.php" class="text-muted small text-decoration-none">← Ir a gestión de productos</a>
+    <a href="productos.php" class="text-muted small text-decoration-none">← Ir a gestión de productos</a>
 </div>
 
-<?php include 'includes/footer.php'; ?>
+<?php include '../includes/footer.php'; ?>

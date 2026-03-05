@@ -2,7 +2,11 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-include 'conexion.php';
+// Detectar si estamos en la carpeta admin para ajustar rutas
+$is_admin_folder = strpos($_SERVER['PHP_SELF'], '/admin/') !== false;
+$path_prefix = $is_admin_folder ? '../' : '';
+
+include_once __DIR__ . '/conexion.php';
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -140,6 +144,21 @@ include 'conexion.php';
         .alert-warning {
             border-left-color: #ffc107 !important;
         }
+
+        .navbar-brand {
+            font-size: 2rem !important;
+            transition: transform 0.3s ease;
+        }
+
+        .navbar-brand:hover {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .navbar-brand {
+                font-size: 1.5rem !important;
+            }
+        }
     </style>
 </head>
 
@@ -153,10 +172,12 @@ include 'conexion.php';
     ?>
     <nav class="navbar navbar-expand-lg mb-5">
         <div class="container text-center">
-            <a class="navbar-brand mx-auto" href="index.php">PSICOPOMPO</a>
+            <a class="navbar-brand mx-auto" href="<?= $path_prefix ?>index.php">
+                PSICOPOMPO
+            </a>
             <div class="d-flex gap-3 align-items-center">
                 <?php if (!isset($_SESSION['es_admin']) || !$_SESSION['es_admin']): ?>
-                    <a href="carrito.php" class="nav-link">
+                    <a href="<?= $path_prefix ?>carrito.php" class="nav-link">
                         Carrito <?= $cart_count > 0 ? "<span class='badge bg-dark ms-1'>$cart_count</span>" : "" ?>
                     </a>
                 <?php endif; ?>
@@ -168,8 +189,10 @@ include 'conexion.php';
                             Mi Cuenta
                         </a>
                         <ul class="dropdown-menu border-0 shadow-sm" aria-labelledby="userMenu">
-                            <li><a class="dropdown-item small fw-bold" href="mis_pedidos.php">MIS PEDIDOS</a></li>
-                            <li><a class="dropdown-item small fw-bold" href="mi_perfil.php">MI PERFIL</a></li>
+                            <li><a class="dropdown-item small fw-bold" href="<?= $path_prefix ?>mis_pedidos.php">MIS
+                                    PEDIDOS</a></li>
+                            <li><a class="dropdown-item small fw-bold" href="<?= $path_prefix ?>mi_perfil.php">MI PERFIL</a>
+                            </li>
                         </ul>
                     </div>
                 <?php endif; ?>
@@ -181,21 +204,24 @@ include 'conexion.php';
                             Admin
                         </a>
                         <ul class="dropdown-menu border-0 shadow-sm" aria-labelledby="adminMenu">
-                            <li><a class="dropdown-item small fw-bold" href="admin_productos.php">GESTIÓN PRODUCTOS</a></li>
-                            <li><a class="dropdown-item small fw-bold" href="admin_usuarios.php">GESTIÓN USUARIOS</a></li>
+                            <?php $admin_p = $is_admin_folder ? '' : 'admin/'; ?>
+                            <li><a class="dropdown-item small fw-bold" href="<?= $admin_p ?>productos.php">GESTIÓN
+                                    PRODUCTOS</a></li>
+                            <li><a class="dropdown-item small fw-bold" href="<?= $admin_p ?>usuarios.php">GESTIÓN
+                                    USUARIOS</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item small fw-bold text-warning" href="admin_logs.php">LOGS DE
+                            <li><a class="dropdown-item small fw-bold text-warning" href="<?= $admin_p ?>logs.php">LOGS DE
                                     SEGURIDAD</a></li>
                         </ul>
                     </div>
                 <?php endif; ?>
 
                 <?php if (isset($_SESSION['user_id'])): ?>
-                    <a href="logout.php" class="nav-link text-danger">Salir</a>
+                    <a href="<?= $path_prefix ?>logout.php" class="nav-link text-danger">Salir</a>
                 <?php else: ?>
-                    <a href="login.php" class="nav-link">Entrar</a>
+                    <a href="<?= $path_prefix ?>login.php" class="nav-link">Entrar</a>
                 <?php endif; ?>
             </div>
         </div>
@@ -203,17 +229,20 @@ include 'conexion.php';
 
     <div class="container pb-5">
         <?php if (isset($_SESSION['mensaje'])): ?>
-            <div class="alert alert-floating alert-<?= $_SESSION['mensaje_tipo'] ?? 'info' ?> alert-dismissible fade show border-0 shadow-sm mb-4" role="alert">
+            <?php
+            $tipo = $_SESSION['mensaje_tipo'] ?? 'info';
+            $icon = 'ℹ️';
+            if ($tipo === 'success')
+                $icon = '✅';
+            if ($tipo === 'danger')
+                $icon = '❌';
+            if ($tipo === 'warning')
+                $icon = '⚠️';
+            ?>
+            <div class="alert alert-floating alert-<?= $tipo ?> alert-dismissible fade show border-0 shadow-sm mb-4"
+                role="alert">
                 <div class="d-flex align-items-center">
-                    <span class="me-3 fs-3">
-                        <?php
-                        $icon = 'ℹ️';
-                        if ($_SESSION['mensaje_tipo'] === 'success') $icon = '✅';
-                        if ($_SESSION['mensaje_tipo'] === 'danger') $icon = '❌';
-                        if ($_SESSION['mensaje_tipo'] === 'warning') $icon = '⚠️';
-                        echo $icon;
-                        ?>
-                    </span>
+                    <span class="me-3 fs-3"><?= $icon ?></span>
                     <div><?= $_SESSION['mensaje'] ?></div>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>

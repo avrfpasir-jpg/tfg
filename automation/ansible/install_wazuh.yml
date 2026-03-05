@@ -1,0 +1,42 @@
+---
+- name: Instalación de EDR Wazuh Agent (Amazon Linux 2023)
+  hosts: web_servers
+  become: yes
+  vars:
+    wazuh_manager_ip: "REEMPLAZAR_CON_IP_MANAGER" # Set this in your inventory or here
+    wazuh_agent_name: "Sentinel-Web-EC2"
+
+  tasks:
+    - name: Importar clave GPG de Wazuh
+      rpm_key:
+        state: present
+        key: https://packages.wazuh.com/key/GPG-KEY-WAZUH
+
+    - name: Añadir repositorio de Wazuh
+      yum_repository:
+        name: wazuh
+        description: Wazuh repository
+        baseurl: https://packages.wazuh.com/4.x/yum/
+        gpgcheck: yes
+
+    - name: Instalar agente de Wazuh
+      dnf:
+        name: wazuh-agent
+        state: present
+
+    - name: Configurar IP del Manager en ossec.conf
+      lineinfile:
+        path: /var/ossec/etc/ossec.conf
+        regexp: '<address>.*</address>'
+        line: "      <address>{{ wazuh_manager_ip }}</address>"
+        backrefs: yes
+
+    - name: Habilitar e iniciar servicio del agente
+      systemd:
+        name: wazuh-agent
+        enabled: yes
+        state: started
+
+    - name: Verificar conexión del agente
+      command: /var/ossec/bin/agent-auth -m {{ wazuh_manager_ip }}
+      ignore_errors: yes

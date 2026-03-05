@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../conexion.php';
+include '../includes/conexion.php';
 include '../includes/seguridad.php';
 
 // Verificar permisos de admin
@@ -16,7 +16,7 @@ if ($id) {
     if ($id == $_SESSION['user_id']) {
         $_SESSION['mensaje'] = "Error: No puedes eliminar tu propia cuenta.";
         $_SESSION['mensaje_tipo'] = "danger";
-        header("Location: ../admin_usuarios.php");
+        header("Location: ../admin/usuarios.php");
         exit();
     }
 
@@ -45,6 +45,6 @@ if ($id) {
     }
 }
 
-header("Location: ../admin_usuarios.php");
+header("Location: ../admin/usuarios.php");
 exit();
 ?>

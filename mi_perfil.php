@@ -1,6 +1,10 @@
 <?php
-include 'includes/header.php';
-include 'includes/seguridad.php';
+include_once 'includes/conexion.php';
+include_once 'includes/seguridad.php';
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
@@ -11,6 +15,8 @@ $user_id = $_SESSION['user_id'];
 $stmt = $conexion->prepare("SELECT * FROM usuarios WHERE id = ?");
 $stmt->execute([$user_id]);
 $user = $stmt->fetch();
+
+include 'includes/header.php';
 
 $success = '';
 $error = '';

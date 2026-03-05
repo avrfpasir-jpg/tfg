@@ -1,6 +1,5 @@
 <?php
-include 'includes/header.php';
-
+include_once 'includes/conexion.php';
 $id = $_GET['id'] ?? 0;
 $stmt = $conexion->prepare("SELECT * FROM productos WHERE id = ?");
 $stmt->execute([$id]);
@@ -12,6 +11,7 @@ if (!$p) {
 }
 
 $pageTitle = $p['nombre'];
+include 'includes/header.php';
 ?>
 
 <div class="row mt-5">

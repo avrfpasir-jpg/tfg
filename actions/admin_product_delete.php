@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../conexion.php';
+include '../includes/conexion.php';
 include '../includes/seguridad.php';
 
 // 1. Seguridad: Solo administradores
@@ -57,6 +57,6 @@ if ($id) {
     }
 }
 
-header("Location: ../admin_productos.php");
+header("Location: ../admin/productos.php");
 exit();
 ?>

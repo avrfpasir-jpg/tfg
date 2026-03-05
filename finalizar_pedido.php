@@ -1,15 +1,23 @@
 <?php
-include 'includes/header.php';
+// Iniciar sesión antes de cualquier validación
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
+// Validar que el usuario esté autenticado ANTES de incluir header.php
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
 
+// Validar que haya productos en el carrito
 if (!isset($_SESSION['cart']) || empty($_SESSION['cart'])) {
     header("Location: index.php");
     exit();
 }
+
+// Ahora sí incluir el header
+include 'includes/header.php';
 
 $error_msg = '';
 $pedido_id = 0;

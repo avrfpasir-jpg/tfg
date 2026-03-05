@@ -2,15 +2,15 @@
 // conexion.php - Simple database connection
 $host = 'localhost';
 $db = 'tienda_segura';
-$user = 'root';
-$pass = '';
+$user = 'adminweb';
+$pass = 'clave123';
 $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
 $options = [
-    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, // ERRORES VISUALES
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    PDO::ATTR_EMULATE_PREPARES => false,
+    PDO::ATTR_EMULATE_PREPARES => false,//evitar SQL inyection
 ];
 
 try {

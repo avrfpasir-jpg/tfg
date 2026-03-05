@@ -1,7 +1,10 @@
 <?php
-$pageTitle = "Entrar";
-include 'includes/header.php';
-include 'includes/seguridad.php';
+include_once 'includes/conexion.php';
+include_once 'includes/seguridad.php';
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -10,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $stmt = $conexion->prepare("SELECT * FROM usuarios WHERE username = ?");
     $stmt->execute([$username]);
-    $user = $stmt->fetch();
+    $user = $stmt->fetch(); //Evitar SQL inyection papa
 
     if ($user && password_verify($password, $user['password_hash'])) {
         session_regenerate_id(true);
@@ -25,6 +28,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "Usuario o contraseña incorrectos.";
     }
 }
+
+$pageTitle = "Entrar";
+include 'includes/header.php';
 ?>
 
 <div class="row justify-content-center mt-5">
