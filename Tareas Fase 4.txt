@@ -1,0 +1,72 @@
+**1. Contexto y Objetivos**  
+Una vez alcanzado el **Despliegue Mínimo Viable** en la fase anterior, la Fase 4 se centra en transformar esa infraestructura base en una solución robusta, segura y profesional. El objetivo es eliminar la deuda técnica y asegurar que el sistema sea capaz de soportar entornos de producción reales.  
+Los objetivos principales de esta etapa son:  
+
+- **Optimización y Escalabilidad**: Implementar soluciones de **Alta Disponibilidad (HA)** y balanceo de carga para garantizar la continuidad del negocio.
+- **Robustez Operativa**: Configurar sistemas de monitorización avanzada y alertas en tiempo real.
+- **Seguridad Profunda (Hardening)**: Aplicar directrices de endurecimiento en todos los servicios y sistemas operativos desplegados.
+- **Automatización**: Refinar los procesos mediante scripts o herramientas de Infraestructura como Código (IaC) para minimizar errores humanos.
+
+  
+  
+**2. Tareas a Realizar**  
+El equipo de trabajo deberá abordar los siguientes ejes técnicos:  
+**A. Servicios Avanzados y Alta Disponibilidad**  
+
+- **Implementación de HA**: Configuración de clústeres, redundancia de enlaces o bases de datos replicadas para evitar puntos únicos de fallo.
+- **Balanceo de Carga**: Despliegue de soluciones (como HAProxy o Nginx avanzado) para distribuir el tráfico entre nodos.
+
+**B. Monitorización y Automatización**  
+
+- **Panel de Control**: Configuración de herramientas como Zabbix, Prometheus o Grafana
+- **Gestión de Alertas**: Definición de umbrales críticos y canales de notificación (email, mensajería).
+- **CI/CD y Scripting**: Automatización de tareas repetitivas de administración y despliegues mediante Ansible, PowerShell DSC o similares.
+
+**C. Hardening (Endurecimiento)**  
+
+- **Cierre de Superficie de Ataque**: Auditoría de puertos, desactivación de servicios innecesarios y aplicación de políticas de contraseñas estrictas.
+- **Conformidad y Auditoría**: Verificación de que el sistema cumple con los requisitos de seguridad iniciales y las normativas aplicables.
+
+**D. Pruebas de Rendimiento**  
+
+- **Stress Testing**: Ejecución de pruebas de carga para identificar cuellos de botella en la CPU, RAM o ancho de banda.
+- **Validación de RTO/RPO**: Pruebas reales de recuperación ante desastres para verificar los
+
+   
+**3. Entregables**  
+Se deberá entregar a través de la plataforma la siguiente documentación:  
+**A. Documento Técnico (Memoria de Fase 4)**  
+Siguiendo la coherencia de las entregas anteriores, el índice debe incluir:  
+
+1. **Actualización de la Planificación**:
+
+- Diagrama de Gantt final con las desviaciones reales.
+- Gestión de recursos humanos y materiales adicionales.
+
+2. **Ejecución de Servicios Avanzados**:
+
+- Evidencias de la configuración de Alta Disponibilidad y balanceo.
+- Capturas de los paneles de monitorización funcionando con datos reales.
+
+3. **Informe de Hardening y Seguridad**:
+
+- Listado de medidas de endurecimiento aplicadas (parcheo, GPOs, reglas de firewall avanzadas).
+- Resultados de los escaneos de vulnerabilidades.
+
+4. **Resultados de Pruebas de Rendimiento**:
+
+- Métricas obtenidas durante las pruebas de estrés y propuestas de mejora.
+
+5. **Gestión de Cambios e Incidencias**:
+
+- Registro detallado de cambios respecto al diseño de la Fase 2.
+- Log de incidencias detectadas durante la fase de endurecimiento y su resolución.
+
+6. **Valoración Económica Final**:
+
+- Comparativa final: Presupuesto inicial (Fase 2) vs. Coste real acumulado (Fase 3 y 4).
+
+**B. Repositorio y Tablero de Proyecto**  
+
+- **Tablero Kanban**: Todas las tareas de "Ampliación" y "Hardening" deben estar en estado "Done".
+- **Trazabilidad total**: Cada cambio de configuración avanzado debe estar respaldado por un _commit_ descriptivo en el repositorio.

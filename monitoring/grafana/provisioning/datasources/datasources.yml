@@ -1,0 +1,46 @@
+# ============================================================
+#  Grafana - Datasources provisioning
+#  Prometheus (métricas) + Loki (logs) + OpenSearch/Wazuh (alertas seguridad)
+# ============================================================
+
+apiVersion: 1
+
+datasources:
+
+  # ── Prometheus ────────────────────────────────────────────
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: false
+    jsonData:
+      timeInterval: "15s"
+
+  # ── Loki (logs) ───────────────────────────────────────────
+  - name: Loki
+    type: loki
+    access: proxy
+    url: http://loki:3100
+    editable: false
+
+  # ── Wazuh Indexer (OpenSearch) ────────────────────────────
+  # Consúltalo en la pestaña "Index Management" del dashboard de Wazuh
+  # El índice de alertas es: wazuh-alerts-*
+  - name: Wazuh-OpenSearch
+    type: grafana-opensearch-datasource
+    access: proxy
+    url: https://${WAZUH_PRIVATE_IP}:9200
+    basicAuth: true
+    basicAuthUser: ${WAZUH_INDEXER_USER}
+    editable: false
+    jsonData:
+      database: "wazuh-alerts-*"
+      timeField: "@timestamp"
+      version: "2.x"
+      flavor: "opensearch"
+      logMessageField: "full_log"
+      logLevelField: "rule.level"
+      tlsSkipVerify: true   # Wazuh usa certificado autofirmado
+    secureJsonData:
+      basicAuthPassword: ${WAZUH_INDEXER_PASSWORD}

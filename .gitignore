@@ -1,0 +1,16 @@
+# Credenciales y secretos — NUNCA subir a GitHub
+monitoring/.env
+*.pem
+*.key
+*.p12
+
+# Archivos de contexto internos
+contexto.txt
+conexiones.txt
+
+# Sistema
+.DS_Store
+*.swp
+*~
+__pycache__/
+*.pyc

@@ -1,0 +1,25 @@
+# ============================================================
+#  Promtail - Agente de logs local (en la Monitoring EC2)
+#  Para el servidor Web y DB, instalar Promtail por separado
+#  como servicio systemd (ver install-exporters.sh)
+# ============================================================
+
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: 'monitoring-server-logs'
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: 'monitoring'
+          host: 'monitoring-ec2'
+          __path__: /var/log/{syslog,auth.log,dpkg.log}
