@@ -1,0 +1,61 @@
+<?php
+include_once 'includes/conexion.php';
+include_once 'includes/seguridad.php';
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+$error = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = trim($_POST['username']);
+    $password = $_POST['password'];
+
+    $stmt = $conexion->prepare("SELECT * FROM usuarios WHERE username = ?");
+    $stmt->execute([$username]);
+    $user = $stmt->fetch(); //Evitar SQL inyection papa
+
+    if ($user && password_verify($password, $user['password_hash'])) {
+        session_regenerate_id(true);
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['username'] = $user['username'];
+        $_SESSION['es_admin'] = $user['es_admin'];
+        registrar_evento($conexion, 'LOGIN_EXITOSO', "Usuario: $username", 1);
+        header("Location: index.php");
+        exit();
+    } else {
+        registrar_evento($conexion, 'LOGIN_FALLIDO', "Intento con usuario: $username", 3);
+        $error = "Usuario o contraseña incorrectos.";
+    }
+}
+
+$pageTitle = "Entrar";
+include 'includes/header.php';
+?>
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-4">
+        <div class="card p-4">
+            <h2 class="fw-black mb-4">ENTRAR</h2>
+            <?php if ($error): ?>
+                <div class="alert alert-danger"><?= $error ?></div>
+            <?php endif; ?>
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Usuario</label>
+                    <input type="text" name="username" class="form-control" required>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Contraseña</label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 py-3">ACCEDER</button>
+                <div class="text-center mt-3">
+                    <a href="registro.php" class="text-dark small">¿No tienes cuenta? Regístrate</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<?php include 'includes/footer.php'; ?>
