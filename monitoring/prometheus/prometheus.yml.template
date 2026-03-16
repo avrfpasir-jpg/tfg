@@ -19,14 +19,14 @@ rule_files:
 alerting:
   alertmanagers:
     - static_configs:
-        - targets: ['alertmanager:9093']
+        - targets: ['localhost:9093']
 
 scrape_configs:
 
   # -- Prometheus (automonitorización) -----------------------
   - job_name: 'prometheus'
     static_configs:
-      - targets: ['prometheus:9090']
+      - targets: ['localhost:9090']
 
   # -- Servidor WEB (IP privada estable) ---------------------
   - job_name: 'web-node'
@@ -69,4 +69,4 @@ scrape_configs:
   # -- Loki (automonitorización) -----------------------------
   - job_name: 'loki'
     static_configs:
-      - targets: ['loki:3100']
+      - targets: ['localhost:3100']

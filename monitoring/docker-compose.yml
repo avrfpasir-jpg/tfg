@@ -9,6 +9,8 @@ version: '3.8'
 networks:
   monitoring:
     driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1500
 
 volumes:
   prometheus_data:
@@ -23,6 +25,7 @@ services:
     image: prom/prometheus:v2.51.2
     container_name: prometheus
     restart: unless-stopped
+    network_mode: host
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
@@ -32,75 +35,59 @@ services:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - ./prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
       - prometheus_data:/prometheus
-    ports:
-      - "9090:9090"
-    networks:
-      - monitoring
 
   # ── GRAFANA ────────────────────────────────────────────────
   grafana:
     image: grafana/grafana:10.4.2
     container_name: grafana
     restart: unless-stopped
+    network_mode: host
     environment:
       - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-Sentinel@2025!}
       - GF_USERS_ALLOW_SIGN_UP=false
       - GF_SERVER_ROOT_URL=http://0.0.0.0:3000
-      # Plugins necesarios: OpenSearch para Wazuh + Loki
       - GF_INSTALL_PLUGINS=grafana-opensearch-datasource
+      - WAZUH_PRIVATE_IP=${WAZUH_PRIVATE_IP}
+      - WAZUH_INDEXER_USER=${WAZUH_INDEXER_USER}
+      - WAZUH_INDEXER_PASSWORD=${WAZUH_INDEXER_PASSWORD}
     volumes:
       - grafana_data:/var/lib/grafana
       - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
       - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
-    ports:
-      - "3000:3000"
-    networks:
-      - monitoring
-    depends_on:
-      - prometheus
-      - loki
 
   # ── ALERTMANAGER ───────────────────────────────────────────
   alertmanager:
     image: prom/alertmanager:v0.27.0
     container_name: alertmanager
     restart: unless-stopped
+    network_mode: host
     command:
       - '--config.file=/etc/alertmanager/alertmanager.yml'
       - '--storage.path=/alertmanager'
     volumes:
       - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
       - alertmanager_data:/alertmanager
-    ports:
-      - "9093:9093"
-    networks:
-      - monitoring
 
   # ── LOKI (almacén de logs) ─────────────────────────────────
   loki:
     image: grafana/loki:2.9.7
     container_name: loki
     restart: unless-stopped
+    network_mode: host
     command: -config.file=/etc/loki/local-config.yaml
     volumes:
       - ./loki/loki-config.yml:/etc/loki/local-config.yaml:ro
       - loki_data:/loki
-    ports:
-      - "3100:3100"
-    networks:
-      - monitoring
 
-  # ── PROMTAIL (agente de logs local en Monitoring EC2) ──────
+  # ── PROMTAIL (agente de logs local) ────────────────────────
   promtail:
     image: grafana/promtail:2.9.7
     container_name: promtail
     restart: unless-stopped
+    network_mode: host
     command: -config.file=/etc/promtail/promtail-config.yml
     volumes:
       - /var/log:/var/log:ro
       - ./promtail/promtail-config.yml:/etc/promtail/promtail-config.yml:ro
-    networks:
-      - monitoring
-    depends_on:
-      - loki
+
