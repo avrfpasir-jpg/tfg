@@ -1,0 +1,11 @@
+apiVersion: 1
+
+contactPoints:
+  - name: Telegram Security Alerts
+    receivers:
+      - uid: telegram_recevier
+        type: telegram
+        settings:
+          bot_token: "8054315854:AAHUDCRz0QyucnXoGQi-eai5eb3bY-6FEeI"
+          chat_id: "8798461982"
+        disableResolveMessage: false

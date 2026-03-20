@@ -1,0 +1,23 @@
+apiVersion: 1
+
+groups:
+  - name: Alertas de Seguridad SENTINEL
+    rules:
+      - alertname: Ataque Crítico Detectado (Wazuh Nivel > 10)
+        condition: A
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: wazuh_ds
+            model:
+              query: "rule.level: >=10"
+              timeField: "@timestamp"
+              type: grafana-opensearch-datasource
+        for: 1m
+        annotations:
+          summary: "Evento de seguridad crítico detectado"
+          description: "Wazuh ha alertado de un evento de nivel 10 o superior."
+        labels:
+          severity: critical

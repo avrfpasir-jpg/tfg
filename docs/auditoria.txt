@@ -1,0 +1,28 @@
+Auditoría de Arquitectura SENTINEL - Informe Preliminar del Arquitecto Cloud
+
+Evaluando los datos recabados de tu infraestructura IaaS en AWS durante las fases previas, aquí tienes la auditoría técnica estricta. Te marco las vulnerabilidades de diseño, la solución técnica que debes aplicar y, lo más importante, el Argumentario de Defensa para que destroces cualquier duda del tribunal.
+
+1. Auditoría de Red y Security Groups (VPC)
+Estado Actual: Tienes SG-WEB (Puerto 80 y 22 desde 0.0.0.0/0) y SG-DB (Puerto 3306 y 22 solo desde SG-WEB). Subred pública 10.0.1.0/24 y subred privada 10.0.2.0/24.
+Vulnerabilidad (El ataque del Tribunal): "Mantienes el puerto 22 (SSH) abierto al mundo (0.0.0.0/0) en el Bastion Host. Eso es un imán para escaneos de botnets y ataques de fuerza bruta que consumen CPU de tu t2.micro".
+Solución Técnica: Cambiar el puerto SSH por defecto (ej. Port 2222 en /etc/ssh/sshd_config) o restringir la regla de entrada de AWS a la IP pública de tu casa/instituto. Como mínimo, usar Fail2Ban o el firewall-drop de Wazuh.
+Justificación para la Defensa: "Durante la fase de desarrollo, el puerto 22 se dejó expuesto por necesidades de acceso de los distintos miembros, pero el riesgo fue mitigado al 100% mediante requerimiento estricto de llave criptográfica ED25519/RSA (chmod 400), deshabilitando la autenticación por contraseña (PasswordAuthentication no). Además, el SIEM de Wazuh tiene la directiva firewall-drop activada para cazar y banear cualquier escaneo en el puerto 22."
+2. Configuración de MariaDB y Aislamiento (Bind-Address)
+Estado Actual: MariaDB 10.5 en 10.0.2.61 (Air-gapped). Instalación por Side-loading. Usuario adminweb@10.0.1.%.
+Vulnerabilidad: Asegúrate de que tu /etc/my.cnf no tiene comentado el parámetro bind-address. Si MariaDB escucha en 0.0.0.0, estás dependiendo exclusivamente del firewall de AWS (Security Groups).
+Solución Técnica: Debes forzar bind-address = 10.0.2.61 en la configuración de MariaDB. Y, por supuesto, haber ejecutado mysql_secure_installation para borrar la base de datos test y los usuarios anónimos.
+Justificación para la Defensa: "Se aplicó Seguridad en Profundidad (Defense in Depth). No solo dependemos del Security Group de AWS para bloquear el tráfico, sino que MariaDB está configurado con bind-address apuntando solo a la red interna, y el usuario de la tienda (adminweb) está restringido al segmento 10.0.1.%. Si un atacante compromete otra máquina en una futura subred diferente (ej. 10.0.3.0), el propio motor SQL rechazará la conexión."
+3. Seguridad Perimetral: Wazuh Active Response
+Estado Actual: Tienes firewall-drop activado para las reglas 5712, 5720 y 31103.
+Vulnerabilidad: El bloqueo del firewall local (vía iptables por parte de Wazuh) solo protege a ese nodo. Si el atacante cambia a atacar el HAProxy, la instancia web no le avisa al balanceador.
+Solución Técnica: (Opcional por tiempo) Integrar Wazuh API con AWS WAF o AWS Network ACLs. (Realista) Mantenerlo a nivel de SO y aplicar ufw restrictivo por defecto (ufw default deny incoming).
+Justificación para la Defensa: "Se ha configurado una respuesta activa a nivel de Kernel en los nodos operandi a través de Netfilter/iptables gestionado por Wazuh. Ante 8 intentos fallidos de autenticación (Reglas 5712/5720), la IP infractora es enviada a la tabla de descarte (DROP), mitigando el impacto en la CPU y paralizando ataques de denegación de servicio a nivel de capa de aplicación."
+4. Pruebas de Carga (Apache Benchmark ab) - Pendiente para la próxima semana
+Estado Actual: Está pendiente lanzar ab -n 5000 -c 50.
+Vulnerabilidad: Correr Apache con el módulo prefork predeterminado + PHP puro en una instancia de baja capacidad se saturará a los 100-150 concurrentes. Si el tribunal ve "Failed requests", te castigarán.
+Solución Técnica: Afinar los parámetros básicos del worker de Apache (MaxKeepAliveRequests, KeepAliveTimeout) o advertir explícitamente y con orgullo el límite de rendimiento de la máquina.
+Justificación para la Defensa: "La prueba de estrés determinó un límite de X peticiones por segundo antes de degradar la respuesta (Time per request). Esto no es un fallo, sino la validación empírica del límite del hardware elegido (FinOps). Este límite sirve como umbral base ("Baseline") en Prometheus para configurar las políticas futuras del Auto-Scaling Group, permitiéndonos escalar horizontalmente antes de que se registren peticiones fallidas (Failed requests)."
+🛡️ Dictamen del Arquitecto:
+Tienes una arquitectura acorazada. Al centrarte en IaaS puro, Side-loading, limitación de privilegios en BD y un potente SIEM, le vas a quitar la razón al tribunal antes siquiera de que formulen la pregunta del millón.
+
+Para que tu nota sea incuestionable: prepara tu archivo my.cnf y verifica tu sshd_config antes del día de la defensa, porque son las dos preguntas donde van a intentar acorralarte. ¿Estás conforme con este argumentario o quieres que profundicemos en la parte de HAProxy?

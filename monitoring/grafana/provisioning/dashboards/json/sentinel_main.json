@@ -231,6 +231,123 @@
         "x": 0,
         "y": 14
       },
+      "id": 8,
+      "panels": [],
+      "title": "MÉTRICAS BASE DE DATOS (MARIADB)",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus_ds"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 150
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 0,
+        "y": 15
+      },
+      "id": 9,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "text": {}
+      },
+      "pluginVersion": "10.4.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus_ds"
+          },
+          "editorMode": "code",
+          "expr": "mysql_global_status_threads_connected{instance=\"Tienda-DB-Server\"}",
+          "instant": true,
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Conexiones MariaDB Activas",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus_ds"
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 18,
+        "x": 6,
+        "y": 15
+      },
+      "id": 10,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus_ds"
+          },
+          "editorMode": "code",
+          "expr": "rate(mysql_global_status_questions{instance=\"Tienda-DB-Server\"}[5m])",
+          "legendFormat": "Queries/sec",
+          "refId": "A"
+        }
+      ],
+      "title": "Tráfico de Consultas SQL",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 21
+      },
       "id": 6,
       "panels": [],
       "title": "SEGURIDAD (WAZUH ALERTS)",
@@ -306,7 +423,7 @@
           }
         ]
       },
-      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 15 },
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 22 },
       "id": 7,
       "options": {
         "footer": { "show": false },
@@ -361,6 +478,6 @@
   "timezone": "",
   "title": "SENTINEL - Resumen Ejecutivo",
   "uid": "sentinel-main",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }

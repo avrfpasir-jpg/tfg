@@ -1283,3 +1283,60 @@ die("Debug: " . $variable);
 **Documento creado para el proyecto Tienda Segura**  
 **Fecha**: Febrero 2026  
 **Versión**: 1.0
+
+---
+
+## 16. INFRAESTRUCTURA Y DESPLIEGUE (AVANZADO)
+
+Este apartado explica el razonamiento arquitectónico de por qué el proyecto ha evolucionado de un entorno local (XAMPP) a una infraestructura profesional en la nube.
+
+### 16.1 ¿Por qué AWS? (La Nube)
+AWS proporciona una disponibilidad global y herramientas profesionales que un entorno local no puede ofrecer:
+- **Disponibilidad:** La tienda es accesible desde cualquier parte del mundo 24/7.
+- **Seguridad en Red:** Uso de VPC (Virtual Private Cloud) y Security Groups para aislar los servidores.
+- **Realismo:** Demuestra el dominio de la gestión de recursos remotos y conectividad SSH, estándar en la industria.
+
+### 16.2 ¿Por qué Docker? (Contenedores)
+El uso de contenedores permite una gestión mucho más eficiente de los servicios:
+- **Aislamiento:** Cada servicio (Grafana, Prometheus) corre en su propio entorno, evitando conflictos de dependencias.
+- **Portabilidad:** Permite mover todo el stack de monitorización entre diferentes proveedores de nube simplemente copiando el archivo `docker-compose.yml`.
+- **Rapidez:** Desplegar servicios complejos se reduce a un solo comando, garantizando que el entorno sea idéntico para todos los desarrolladores.
+
+### 16.3 Observabilidad: Grafana, Prometheus y Loki
+Para gestionar el sistema de forma profesional, no basta con que "funcione"; hay que saber **cómo** funciona en todo momento:
+- **Prometheus (Métricas):** El "termómetro" del sistema. Mide el consumo de CPU, RAM y tráfico de red en tiempo real.
+- **Loki (Logs):** La "caja negra". Centraliza todos los registros de errores de Apache, accesos y actividad del sistema para análisis posterior.
+- **Grafana (Visualización):** El panel de control. Traduce los datos técnicos en gráficas intuitivas que permiten identificar problemas de un vistazo.
+
+### 16.4 Seguridad Activa: Wazuh (SIEM)
+Mientras la monitorización tradicional vigila el rendimiento, Wazuh vigila la integridad:
+- **Detección de Amenazas:** Identifica ataques de fuerza bruta, escaneos de puertos o cambios no autorizados en archivos críticos.
+- **Integración:** Envía alertas de seguridad directamente a Grafana, permitiendo una respuesta rápida ante incidentes.
+
+### 16.5 Balanceo de Carga (Fase 4)
+Para escalar el sistema y evitar puntos únicos de fallo:
+- **HAProxy:** Actúa como la "puerta de entrada" (puerta giratoria) que reparte el tráfico entre varios servidores web.
+- **Resiliencia:** Si uno de los servidores falla, el balanceador redirige automáticamente el tráfico a los nodos sanos, manteniendo la tienda siempre activa.
+
+---
+
+## 17. OBJETIVO FINAL Y FASE 4
+
+### 17.1 El Objetivo Final: Proyecto SENTINEL
+El propósito de este proyecto es demostrar la capacidad de diseñar y desplegar una infraestructura electrónica **e2e (end-to-end)** profesional, capaz de auto-protegerse, auto-vigilarse y mantenerse siempre operativa bajo estándares industriales.
+
+**Hitos finales:**
+1. **Redundancia:** Eliminación de puntos únicos de fallo mediante balanceo.
+2. **Seguridad Proactiva:** SIEM operativo y políticas de Hardening aplicadas.
+3. **Observabilidad:** Cuadros de mando ejecutivos para monitorización técnica y de seguridad.
+4. **Integración:** Convergencia de Programación, Sistemas, Cloud y Seguridad.
+
+### 17.2 Enfoque Fase 4: "De Prototipo a Fortaleza"
+
+#### Pilares de ejecución:
+1. **HA / Balanceo (Alta Disponibilidad):** Implementación de un **Load Balancer** (HAProxy) para distribuir el tráfico y ocultar la IP real de los servidores de backend.
+2. **Hardening (Endurecimiento):** Reducción de la superficie de ataque mediante auditoría de puertos, cierre de servicios innecesarios y parcheo de seguridad.
+3. **Pruebas de Rendimiento (Stress Testing):** Validación de la carga soportada y verificación de la respuesta de las alertas de monitorización bajo estrés.
+4. **Automatización:** Refinado de scripts para asegurar la reproducibilidad total del entorno en minutos.
+
+
