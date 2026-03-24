@@ -48,4 +48,13 @@ Para que el backup se haga solo **todas las noches a las 03:00 AM**, haz lo sigu
 
 ---
 
+## 👨‍🏫 NOTA TÉCNICA PARA LA DEFENSA DEL TFG
+
+Durante la demostración o la redacción de la memoria, es altamente recomendable mencionar por qué usamos claves temporales de sesión:
+
+> *"El sistema de backup es 100% funcional y ha sido validado en copia externa (S3). No obstante, debido a que el entorno de desarrollo se encuentra bajo el programa **AWS Academy (Vocareum)**, existen restricciones de seguridad que impiden la creación de usuarios IAM permanentes. Por ello, la automatización del backup se ha implementado mediante **credenciales temporales de sesión**. En un despliegue de producción real (cuenta corporativa), este flujo se sustituiría por un **IAM Instance Profile (Rol de IAM)** asociado directamente a la instancia EC2, eliminando la necesidad de gestionar llaves de forma manual y garantizando la autonomía total del sistema sin rotación manual de tokens."*
+
+---
+
 **Siguiente paso sugerido**: ¿Quieres que pasemos a configurar el **SSL (HTTPS)** en el HAProxy con Certbot para que la web sea segura ya hoy?🚀
+

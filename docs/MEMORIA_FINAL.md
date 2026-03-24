@@ -83,9 +83,10 @@ Se ha registrado una desviación temporal del 15% respecto a la planificación i
 
 ## 7. Resultados y Análisis
 ### 7.1. Análisis de los resultados y su impacto
-*   **Capacidad de Respuesta:** Se ha validado mediante `Apache Benchmark` (ab) que el sistema procesa eficazmente una concurrencia de [X] usuarios sin pérdidas de paquetes significativas.
-*   **Resolución de Problemas Técnicos (Troubleshooting):** Durante el desarrollo se resolvieron desafíos críticos, como la conectividad SSH hacia la subred privada y la instalación de software sin gateway de internet.
-*   **Detección de Amenazas:** El SIEM ha demostrado una eficacia muy alta en la detección de ataques de fuerza bruta y monitorización de integridad en tiempo real.
+*   **Capacidad de Respuesta:** Se ha validado mediante `Apache Benchmark` (ab) que el sistema procesa eficazmente una concurrencia de **50 usuarios**, alcanzando un rendimiento medio de **43.64 peticiones por segundo (RPS)**.
+*   **Latencia y Rendimiento:** El **95% de las peticiones** se sirvieron en menos de **443 ms**, lo que garantiza una experiencia de usuario fluida incluso bajo carga moderada.
+*   **Resolución de Problemas Técnicos (Troubleshooting):** Durante el desarrollo se resolvieron desafíos críticos, como la conectividad SSH hacia la subred privada y la instalación de software sin gateway de internet. Se ha detectado un pequeño porcentaje de error (6%) bajo estrés máximo, lo que justifica la implementación futura de mecanismos de auto-escalado horizontal.
+*   **Detección de Amenazas:** El SIEM ha demostrado una eficacia muy alta en la detección de ataques de fuerza bruta y monitorización de integridad en tiempo real. Durante el test de estrés, Grafana registró picos de hasta **15 peticiones de Apache/sg** y **30 consultas SQL/sg**.
 
 | Desafío Detectado | Solución Técnica Aplicada |
 | :--- | :--- |
