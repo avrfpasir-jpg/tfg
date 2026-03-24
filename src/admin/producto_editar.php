@@ -25,13 +25,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stock = $_POST['stock'];
     $imagen = $p ? $p['imagen'] : '';
 
-    // Gestión de imagen
+    // Gestión de imagen con seguridad (Whitelist y MIME Check)
     if (!empty($_FILES['imagen']['name'])) {
+        $allowed_exts = ['jpg', 'jpeg', 'png', 'gif'];
+        $file_ext = strtolower(pathinfo($_FILES['imagen']['name'], PATHINFO_EXTENSION));
+
+        // 1. Validar extensión
+        if (!in_array($file_ext, $allowed_exts)) {
+            $_SESSION['mensaje'] = "Error: Extensión de archivo no permitida (solo JPG, PNG, GIF).";
+            $_SESSION['mensaje_tipo'] = "danger";
+            header("Location: productos.php");
+            exit();
+        }
+
+        // 2. Validar que el CONTENIDO es realmente una imagen (Previene ataques RCE)
+        $check = getimagesize($_FILES['imagen']['tmp_name']);
+        if ($check === false) {
+            $_SESSION['mensaje'] = "Error: El archivo no es una imagen válida.";
+            $_SESSION['mensaje_tipo'] = "danger";
+            header("Location: productos.php");
+            exit();
+        }
+
         $target_dir = "../uploads/";
         if (!is_dir($target_dir))
             mkdir($target_dir, 0777, true);
 
-        $file_ext = pathinfo($_FILES['imagen']['name'], PATHINFO_EXTENSION);
         $new_name = uniqid() . "." . $file_ext;
         $target_file = $target_dir . $new_name;
 
