@@ -5,12 +5,20 @@ include '../includes/conexion.php';
 $id = $_GET['id'] ?? null;
 
 if ($id) {
-    // 1. Validar que el producto existe
-    $stmt = $conexion->prepare("SELECT id, nombre FROM productos WHERE id = ?");
+    // 1. Validar que el producto existe y tiene stock
+    $stmt = $conexion->prepare("SELECT id, nombre, stock FROM productos WHERE id = ?");
     $stmt->execute([$id]);
     $prod = $stmt->fetch();
 
     if ($prod) {
+        // 2. Comprobar stock (Seguridad Backend)
+        if ($prod['stock'] <= 0) {
+            $_SESSION['mensaje'] = "Error: Lo sentimos, el producto '" . htmlspecialchars($prod['nombre']) . "' ya no tiene stock.";
+            $_SESSION['mensaje_tipo'] = "danger";
+            header("Location: " . ($_SERVER['HTTP_REFERER'] ?: '../index.php'));
+            exit();
+        }
+
         if (!isset($_SESSION['cart'])) {
             $_SESSION['cart'] = [];
         }

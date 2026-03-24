@@ -22,8 +22,18 @@ $productos = $conexion->query("SELECT * FROM productos WHERE activo = 1 ORDER BY
                 </a>
                 <div class="card-body p-4">
                     <h5 class="card-title fw-bold mb-1"><?= htmlspecialchars($p['nombre']) ?></h5>
-                    <p class="price-tag mb-3"><?= number_format($p['precio'], 2) ?> €</p>
-                    <a href="actions/cart_add.php?id=<?= $p['id'] ?>" class="btn btn-primary w-100">Añadir al Carrito</a>
+                    <p class="price-tag mb-3">
+                        <?= number_format($p['precio'], 2) ?> €
+                        <?php if ($p['stock'] <= 0): ?>
+                            <span class="badge bg-danger ms-2" style="font-size: 0.6rem;">SIN STOCK</span>
+                        <?php endif; ?>
+                    </p>
+                    
+                    <?php if ($p['stock'] > 0): ?>
+                        <a href="actions/cart_add.php?id=<?= $p['id'] ?>" class="btn btn-primary w-100">Añadir al Carrito</a>
+                    <?php else: ?>
+                        <button class="btn btn-secondary w-100" disabled>AGOTADO</button>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

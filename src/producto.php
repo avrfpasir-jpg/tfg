@@ -45,9 +45,15 @@ include 'includes/header.php';
         </div>
 
         <div class="d-grid">
-            <a href="actions/cart_add.php?id=<?= $p['id'] ?>" class="btn btn-primary btn-lg px-5 py-3 shadow-sm">
-                Añadir al Carrito
-            </a>
+            <?php if ($p['stock'] > 0): ?>
+                <a href="actions/cart_add.php?id=<?= $p['id'] ?>" class="btn btn-primary btn-lg px-5 py-3 shadow-sm">
+                    AÑADIR AL CARRITO
+                </a>
+            <?php else: ?>
+                <button class="btn btn-secondary btn-lg py-3" disabled>
+                    PRODUCTO AGOTADO
+                </button>
+            <?php endif; ?>
         </div>
     </div>
 </div>
