@@ -19,9 +19,14 @@ if ($id) {
         $ventas = $stmt->fetchColumn();
 
         if ($ventas > 0) {
-            // No podemos borrarlo físicamente
-            $_SESSION['mensaje'] = "No se puede eliminar un producto que ya ha sido vendido. Debes mantenerlo para la integridad de los pedidos antiguos.";
-            $_SESSION['mensaje_tipo'] = "warning";
+            // No podemos borrarlo físicamente, pero lo ocultamos (Soft Delete)
+            $stmt = $conexion->prepare("UPDATE productos SET activo = 0 WHERE id = ?");
+            $stmt->execute([$id]);
+
+            registrar_evento($conexion, 'PRODUCTO_OCULTADO', "Admin (" . $_SESSION['username'] . ") ocultó el producto vendido (ID $id) de la tienda pública.", 2);
+
+            $_SESSION['mensaje'] = "El producto tiene ventas y no se puede borrar físicamente, pero ha sido ocultado de la tienda con éxito.";
+            $_SESSION['mensaje_tipo'] = "info";
         } else {
             // Podemos borrarlo
             // Obtener info para borrar la imagen y registrar el log

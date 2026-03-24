@@ -1,7 +1,7 @@
 <?php
 include_once 'includes/conexion.php';
 $id = $_GET['id'] ?? 0;
-$stmt = $conexion->prepare("SELECT * FROM productos WHERE id = ?");
+$stmt = $conexion->prepare("SELECT * FROM productos WHERE id = ? AND activo = 1");
 $stmt->execute([$id]);
 $p = $stmt->fetch();
 

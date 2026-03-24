@@ -3,7 +3,7 @@ $pageTitle = "Catálogo";
 include 'includes/header.php';
 
 // Obtener todos los productos
-$productos = $conexion->query("SELECT * FROM productos ORDER BY id DESC")->fetchAll();
+$productos = $conexion->query("SELECT * FROM productos WHERE activo = 1 ORDER BY id DESC")->fetchAll();
 ?>
 
 <div class="row row-cols-1 row-cols-md-3 g-4">

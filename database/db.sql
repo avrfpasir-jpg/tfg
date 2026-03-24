@@ -1,4 +1,4 @@
--- PSICOPOMPO - ULTA LEAN Edition
+
 CREATE DATABASE IF NOT EXISTS tienda_segura;
 USE tienda_segura;
 
@@ -8,7 +8,8 @@ CREATE TABLE productos (
     descripcion TEXT,
     precio DECIMAL(10,2) NOT NULL,
     stock INT NOT NULL,
-    imagen VARCHAR(255)
+    imagen VARCHAR(255),
+    activo TINYINT DEFAULT 1
 ) ENGINE=InnoDB;
 
 CREATE TABLE usuarios (
