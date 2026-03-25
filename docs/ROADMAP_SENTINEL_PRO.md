@@ -22,7 +22,10 @@ Este listado detalla las tareas necesarias para elevar el proyecto SENTINEL de u
 ## 💾 Fase 3: Resiliencia y Continuidad (Prioridad Media)
 *   [ ] **Optimización de Backups:** Refinar el script de S3 con el flag `--single-transaction` y añadir rotación de copias (borrar antiguos).
 *   [ ] **Protocolo de Restauración:** Documentar y realizar al menos una prueba de restauración completa (Disaster Recovery Plan) y guardarla como anexo.
-*   [ ] **Ciclo de Vida de Logs:** Configurar políticas de retención en Wazuh/Loki para evitar el llenado de disco en instancias de bajo coste.
+*   [ ] **JVM Optimization:** Ajustar el Heap Size de OpenSearch (indexador de Wazuh) a un máximo de 1GB en `jvm.options` para evitar el colapso de la RAM.
+*   [ ] **Index Management (ISM):** Configurar políticas de borrado automático para índices de Wazuh con más de 5 días de antigüedad para liberar IOPS y espacio en disco.
+*   [ ] **Filtrado de Nivel de Eventos:** Configurar los agentes Wazuh para reportar solo eventos de nivel > 5, reduciendo el ruido y la carga del manager durante picos de tráfico.
+*   [ ] **Programación de Escaneos:** Ajustar el `vulnerability-detector` para que los escaneos de vulnerabilidades ocurran solo en horas de baja actividad (ej. 4:00 AM).
 
 ---
 
