@@ -33,7 +33,34 @@ Este listado detalla las tareas necesarias para elevar el proyecto SENTINEL de u
 
 ---
 
-## 📄 Fase 5: Documentación y Defensa (Prioridad Final)
-*   [ ] **Integración de Argumentos "Pro":** Actualizar la Memoria Final con las justificaciones técnicas aprendidas en la simulación del tribunal.
-*   [ ] **Anexo de Troubleshooting:** Crear una tabla de errores reales encontrados durante estos 2 meses y cómo se resolvieron.
-*   [ ] **Guion de Defensa:** Preparar la presentación visual enfocada en la "Arquitectura Resiliente" más que en la simple venta de productos.
+## 📑 Reorientación de la Memoria (ensayo1.pdf)
+
+Para que el documento pase de ser un borrador a una memoria final profesional, es necesario reenfocar varios apartados:
+
+*   **Pivote en la Sección de Redes (Fase 1-2):** En lugar de presentar el "side-loading" manual como la solución final, preséntalo como el "método de despliegue inicial" que luego fue evolucionado a un entorno gestionado mediante **Proxy/NAT** para mayor seguridad.
+*   **Sección de Base de Datos:** Debe aparecer explícitamente el **Principio de Mínimo Privilegio**. No menciones solo que MariaDB está aislada; menciona los permisos del usuario `sentinel_web`.
+*   **Definición de Alta Disponibilidad:** Cambiar la narrativa. En lugar de decir "el HAProxy elimina el SPOF", decir "el HAProxy introduce la **lógica de balanceo** necesaria para la redundancia, identificando el propio balanceador como el siguiente ítem a Clusterizar (SPOF residual documentado)".
+*   **Apartado de Backups:** Eliminar cualquier duda sobre la funcionalidad de S3. Presentar los dumps de SQL con `--single-transaction` como la garantía de integridad referencial definitiva.
+
+---
+
+## 📸 Capturas de Pantalla Necesarias (Evidencias Técnicas)
+
+Añade estas capturas en las secciones indicadas para "blindar" la memoria:
+
+| Captura de Pantalla | Sección en Memoria | Ubicación Recomendada |
+| :--- | :--- | :--- |
+| **Configuración de Security Groups** | Fase 1: Infraestructura | Anexos o Desarrollo |
+| **`SHOW GRANTS` para `sentinel_web`** | Fase 3: Datos | Apartado 6.3 (Actividades) |
+| **Panel de Estadísticas de HAProxy** | Fase 4: HA | Anexo 2 |
+| **Dashboard de Wazuh con Alerta Real** | 7.1. Análisis de Seguridad | Apartado 7.1 |
+| **Peticiones en Terminal (`ab`)** | 7.1. Rendimiento | Anexo 3 |
+| **Bucket de S3 con Backups Diarios** | Fase 4: Resiliencia | Apartado 7.1 (Tabla) |
+| **Terminal con `mysqldump --single-transaction`** | Fase 4: Resiliencia | Apartado 6.3 |
+| **Log de Proxy (Acceso DB -> Internet)** | Fase 2: Conectividad | Desarrollo o Anexos |
+| **Diagrama de Red Final (VPC)** | Fase 1: Redes | Anexo 1 |
+
+---
+
+## 🎯 Conclusión del Reenfoque
+El objetivo es que la memoria no parezca un diario de lo que hiciste, sino un **Informe de Ingeniería** donde cada decisión técnica (por limitada que fuera por AWS) está justificada profesionalmente.
