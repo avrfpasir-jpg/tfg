@@ -1,5 +1,6 @@
 # Credenciales y secretos — NUNCA subir a GitHub
-monitoring/.env
+/secrets/
+infrastructure/monitoring/.env
 *.pem
 *.key
 *.p12
@@ -7,6 +8,7 @@ monitoring/.env
 # Archivos de contexto internos
 contexto.txt
 conexiones.txt
+/docs/02_guias_tecnicas/conexiones.txt
 
 # Sistema
 .DS_Store

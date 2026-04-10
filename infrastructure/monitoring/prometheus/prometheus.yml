@@ -1,0 +1,89 @@
+# ============================================================
+#  Prometheus - prometheus.yml (plantilla con variables)
+#  Se genera el definitivo mediante: ./start.sh
+#  Las IPs privadas de AWS NO cambian entre reinicios
+# ============================================================
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    project: 'SENTINEL'
+    environment: 'production'
+
+# Reglas de alertas
+rule_files:
+  - /etc/prometheus/alerts.yml
+
+# Alertmanager
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093']
+
+scrape_configs:
+
+  # -- Prometheus (automonitorización) -----------------------
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['prometheus:9090']
+
+  # -- Servidores WEB via Auto-Discovery (ASG) ---------------
+  - job_name: 'web-node'
+    ec2_sd_configs:
+      - region: us-east-1
+        port: 9100
+    relabel_configs:
+      - source_labels: [__meta_ec2_tag_Name]
+        regex: .*Sentinel.*
+        action: keep
+      - source_labels: [__meta_ec2_private_ip]
+        target_label: instance
+      - target_label: role
+        replacement: web
+
+  - job_name: 'web-apache'
+    ec2_sd_configs:
+      - region: us-east-1
+        port: 9117
+    relabel_configs:
+      - source_labels: [__meta_ec2_tag_Name]
+        regex: .*Sentinel.*
+        action: keep
+      - source_labels: [__meta_ec2_private_ip]
+        target_label: instance
+      - target_label: role
+        replacement: web
+
+  # -- RDS MariaDB (via CloudWatch Exporter en :9106) --------
+  # NOTA: Requiere 'yet-another-cloudwatch-exporter' (yace) en el servidor de monitorización
+  # o el prometheus-cloudwatch-exporter configurado con el endpoint de RDS.
+  # El exporter scrape las métricas de AWS CloudWatch (FreeStorageSpace, DatabaseConnections, etc.)
+  - job_name: 'rds-cloudwatch'
+    static_configs:
+      - targets: ['localhost:9106']
+        labels:
+          instance: 'RDS-Sentinel-MariaDB'
+          role: 'database'
+
+  # -- ALB (via CloudWatch Exporter en :9106) -----------------
+  # El mismo exporter de CloudWatch publica métricas del ALB (RequestCount, TargetResponseTime, etc.)
+  - job_name: 'alb-cloudwatch'
+    static_configs:
+      - targets: ['localhost:9106']
+        labels:
+          instance: 'Sentinel-ALB'
+          role: 'load-balancer'
+
+  # -- Wazuh Manager (métricas propias via node_exporter) ----
+  - job_name: 'wazuh-node'
+    static_configs:
+      - targets: ['10.0.1.170:9100']
+        labels:
+          instance: 'Wazuh-Manager'
+          role: 'security'
+
+  # -- Loki (automonitorización) -----------------------------
+  - job_name: 'loki'
+    static_configs:
+      - targets: ['loki:3100']

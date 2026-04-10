@@ -1,0 +1,12 @@
+Respuesta de Matrícula: "Wazuh actúa como el cerebro de mi XDR. No solo bloquea ataques de fuerza bruta, sino que monitoriza la integridad de los archivos de la tienda (FIM), analiza los logs de Apache en busca de patrones de inyección SQL y garantiza que el sistema cumple con el endurecimiento (Hardening) necesario mediante escaneos SCA continuos"
+
+
+
+
+
+
+
+
+
+
+
