@@ -1,0 +1,34 @@
+# 🌍 CONTEXTO ACTUALIZADO DEL PROYECTO: SENTINEL (Tienda Segura)
+
+Este documento define la base y el objetivo final del proyecto tras reestructurar su alcance. Sirve como "Brujula" para entender de qué trata exactamente el TFG y cómo defenderlo ante el tribunal.
+
+## 1. ¿De qué trata el proyecto? (El Core Concept)
+**SENTINEL** es una infraestructura cloud para comercio electrónico ("Tienda Segura") desplegada en AWS. 
+Su principal valor no reside en la aplicación web en sí, sino en el **diseño de la red y las capas de seguridad y monitorización** que la protegen. Es un ejercicio puro de Administración de Sistemas y Ciberseguridad Defensiva.
+
+## 2. La Filosofía del Proyecto (El enfoque ante el tribunal)
+El proyecto se rige por tres principios inamovibles que debes usar en tu defensa:
+
+1. **Enfoque IaaS (Infraestructura como Servicio) sobre PaaS:** No usamos servicios mágicos de AWS (nativos) como *Application Load Balancers (ALB)* o *Amazon RDS*. Levantamos instancias de linux en crudo (`t2.micro` y `t3.medium`) e instalamos/gestionamos el software manualmente (HAProxy, MariaDB). ¿Por qué? Para **demostrar competencias reales de ASIR** (configuración de SO, redes, puertos y despliegue offline).
+2. **Defensa en Profundidad (Two-Tier):** La base de datos está en una subred privada ("Air-gapped"), sin conexión a internet y solo accesible a través de la instancia Web (que actúa como Bastion Host). Su software se instaló mediante transferencia manual (Side-loading) para blindarla.
+3. **FinOps (Optimización de Costes):** Dado el límite de presupuesto ($40) y buscando el pragmatismo, se ha sacrificado la Alta Disponibilidad con servidores redundantes ("Keepalived" / "Master-Slave") en favor de una **estrategia de contingencia garantizada mediante Backups externalizados** y monitorización extrema.
+
+## 3. Arquitectura Final (Lo que tenemos)
+La topología actual consta de:
+
+*   **1x Instancia Balanceador:** Servidor con **HAProxy** (Público) que recibe y distribuye el tráfico. *Para la semana que viene tendrá SSL (HTTPS).*
+*   **1x Instancia Web (Bastion):** Servidor con **Apache y PHP** (Público), que aloja la Tienda Segura.
+*   **1x Instancia Base de Datos:** Servidor con **MariaDB** (Privado).
+*   **1x Instancia SIEM/Monitorización:** Servidor `t3.medium` que aloja **Wazuh Manager**, y el stack de contenedores de **Prometheus y Grafana**.
+
+## 4. El "Músculo" del TFG: Seguridad y Monitorización
+El punto fuerte del proyecto es que la Tienda Segura no está "a oscuras". 
+*   **Preventiva:** Segmentación estricta por AWS Security Groups.
+*   **Detectiva:** Agentes Wazuh que vigilan cambios en ficheros críticos (FIM) de la Tienda y de la DB. Dashboards de Grafana con el estado de CPU y logs.
+*   **Reactiva (Respuesta Activa):** Script `firewall-drop` en Wazuh que bloquea automáticamente la IP del atacante si detecta ataques de fuerza bruta por SSH o intentos sospechosos en la web.
+
+## 5. El Punto Final: ¿Qué falta por rematar?
+Para sellar el proyecto y ponerle el lazo (tareas de la próxima semana):
+1.  **Implantar el SSL:** Configurar el dominio `.duckdns.org` con Certbot en HAProxy para cifrar las ventas de la tienda.
+2.  **Backups a Amazon S3:** Un script Cron que haga un `mysqldump` de la base de datos y lo guarde cifrado en un bucket S3. (Esto suple la necesidad de tener dos bases de datos, con la baza del ahorro de dinero).
+3.  **Pruebas de Estrés (Apache Benchmark):** Demostrar empíricamente con datos numéricos cuánto aguanta la tienda con esta configuración actual.

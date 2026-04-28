@@ -1,0 +1,26 @@
+# ==========================================
+# PANEL DE CONTROL SENTINEL - IPs REALES
+# ==========================================
+
+# 1. Servidor Web (Apache/PHP)
+# $IP_PUBLICA=13.218.171.184
+# IP Privada: 10.0.1.250
+ssh -i "llaves-debian13.pem" ec2-user@$IP_PUBLICA
+
+
+# 3. Servidor Wazuh Manager (SIEM)
+# $IP_PUBLICA=
+# IP Privada: 10.0.1.170
+ssh -i "llaves-debian13.pem" ubuntu@$IP_PUBLICA
+
+# 4. Servidor Monitorización (Grafana/Prometheus/Loki)
+# $IP_PUBLICA=3.95.206.104
+# IP Privada: 10.0.1.233
+ssh -i "llaves-debian13.pem" ubuntu@$IP_PUBLICA
+
+
+
+# Credenciales DB (Común para Búnker y RDS)
+# Usuario: sentinel_web
+# Password: S3ntin3l_P4ss_2026!
+# RDS Host: database-sentinel.cyv3h2yxn0v5.us-east-1.rds.amazonaws.com
