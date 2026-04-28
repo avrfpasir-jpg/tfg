@@ -265,85 +265,23 @@
         *   **Content Delivery Network (CDN):** Implementar **CloudFront** para el almacenamiento en caché de contenido estático (imágenes de la tienda), reduciendo la carga en el servidor de origen.
 
         ---
+        
+        ## 📌 ESTADO FINAL — CIERRE DE FASE 5 (22 de abril de 2026)
+        
+        ### ✅ Hitos Alcanzados y Consolidados
+        *   **Infraestructura Cloud:** Arquitectura Multi-Tier validada con ALB y RDS Multi-AZ.
+        *   **Seguridad (Hardening):** Credenciales de BD migradas exitosamente a variables de entorno (getenv) y aislamiento de red verificado entre segmentos.
+        *   **Monitorización:** Stack WPG (Wazuh, Prometheus, Grafana) operativo. Se ha corregido el fallo de estabilidad en el nodo de alertas.
+        *   **Validación DuckDNS:** Dominios `psicopompo.duckdns.org` y `statuspsicopompo.duckdns.org` resolviendo correctamente.
+        *   **Cierre de Pruebas:** Stress tests completados (59 RPS) y Disaster Recovery simulado con éxito.
+        
+        ### 💡 Decisiones Estratégicas Finales
+        1.  **Modelo de Costes (FinOps):** El SIEM Wazuh se considera validado técnicamente tras las pruebas de abril. Se documenta su funcionamiento pero se mantiene en *Cold Standby* para la defensa final para optimizar el presupuesto.
+        2.  **Arquitectura:** El balanceador ALB de AWS se establece como el punto de entrada definitivo para producción, dejando el HAProxy original como prototipo técnico de referencia.
+        
+        ### 🚀 Líneas de Evolución Futura
+        Tras la defensa del proyecto, SENTINEL evolucionará hacia los siguientes objetivos:
+        1.  **SENTINEL IaC:** Codificación total con Terraform y Ansible para despliegues dinámicos.
+        2.  **Seguridad Gestionada:** Integración de AWS Secrets Manager para la rotación de claves y AWS WAF para protección de capa 7 contra ataques de aplicación.
+        3.  **ALTA DISPONIBILIDAD TOTAL:** Implementación de Auto Scaling Groups y EFS para almacenamiento compartido entre nodos web.
 
-        ## 📌 NOTAS DE SESIÓN — Contexto para la Próxima Sesión de Trabajo
-        > **Última actualización:** 1 de abril de 2026.
-        > Este bloque es para uso interno del autor y NO debe incluirse en la versión final entregada al tribunal. Eliminarlo antes de la entrega.
-
-        ### ✅ Estado Actual del Proyecto (Lo que YA está hecho y funciona)
-        *   **Migración RDS Multi-AZ:** Base de datos migrada con éxito a Amazon RDS. Se ha implementado cifrado TLS obligatorio en tránsito mediante la integración de `global-bundle.pem` en `/var/www/secrets/` y el uso dinámico de `__DIR__` en PHP.
-        *   **Balanceador HAProxy y DuckDNS:** Enrutamiento HTTP/HTTPS perfeccionado y operando en `psicopompo.duckdns.org`. Se reescribió `haproxy.cfg` estableciendo Terminación SSL con certificado `.pem` unificado y redirigiendo las peticiones limpiamente al backend Apache privado, resolviendo issues de Timeout previos.
-        *   **Infraestructura AWS:** VPC segmentada, subred pública (HAProxy) y subred privada (Apache + RDS + Monitorización). Configuración correcta y demostrada.
-        *   **Balanceador HAProxy:** Funcionando con SSL (Let's Encrypt) en dominio `psicopompo.duckdns.org`. **NOTA:** Se ha mantenido como "Prototipo Funcional" frente al ALB de AWS por restricciones de tiempo y presupuesto de AWS Academy.
-        *   **Wazuh SIEM:** Completamente operativo. Active Response validado (Regla 5712, Bloqueo iptables de IP `10.0.1.233`, ciclo completo detección-bloqueo-liberación documentado con capturas).
-        *   **Grafana + Prometheus:** Dashboard centralizado con métricas de Apache, MariaDB, CPU y RAM. Panel de alertas de Wazuh integrado.
-        *   **Backup S3:** Script `backup_db.sh` automatizado con `mysqldump --databases` (incluye `CREATE DATABASE`) y Systemd Timer operativo.
-        *   **Tests de Estrés:** `ab -n 5000 -c 50` ejecutado. 59.01 RPS, p90 = 384ms, pico máximo = 33.5s (documentado como límite de saturación del prototipo, no como error).
-        *   **Disaster Recovery:** Simulacro realizado. Comando de restauración corregido a `gunzip -c ... | sudo mysql` (sin nombre de DB, el dump incluye `CREATE DATABASE`).
-        *   **Estructura del Proyecto Reorganizada:** `src` → `app`, `config_sentinel_db.php` → `secrets/`, `automation/monitoring/database` → `infrastructure/`.
-
-        ### 🔴 Tareas Pendientes (Prioridades para el LUNES)
-
-        #### ⚡ Prioridad 1: "Quick Wins" y Limpieza (Lo que haremos primero)
-        *   [ ] **Seguridad: Sacar credenciales del PHP.**
-            *   Update `secrets/config_sentinel_db.php` para usar `getenv()`.
-            *   Configurar variables en el OS del servidor web.
-        *   [ ] **Visual: Corregir Diagrama de Red (Figura 1).**
-            *   Abrir el `.drawio`.
-            *   Mover el **Servidor Web** fuera del recuadro de "Subred Pública" (debe estar en la Privada).
-            *   Regenerar el PDF/Imagen de la Figura 1.
-        *   [ ] **Documentación: Limpieza de Notas.**
-            *   Borrarlas de la `MEMORIA_FINAL.md` una vez esté todo listo para la entrega.
-
-        #### 📦 Prioridad 2: Mejoras de Infraestructura (COMPLETADAS)
-        *   [x] **Migrar MariaDB a Amazon RDS Multi-AZ** (COMPLETADO)
-            *   Migración realizada con éxito, cifrado SSL configurado y acceso validado mediante HAProxy.
-            *   Actualizar endpoint en `secrets/config_sentinel_db.php`.
-
-        #### 📋 Prioridad 3: Repaso Final
-        *   [ ] **Revisión de terminología técnica** en toda la memoria.
-        *   [ ] **Validación de enlaces** a bibliografía y anexos.
-
-        ### 💡 Decisiones Estratégicas Tomadas (Ya inamovibles)
-        1.  **El proyecto es un "Prototipo Funcional de Bajo Coste"**, no un sistema de producción enterprise. Esta narrativa es la respuesta correcta a cualquier crítica sobre el SPOF del balanceador o el coste del sistema.
-        2.  **No se usará Terraform en este TFG.** Se menciona en "Trabajo Futuro" como línea de evolución natural del proyecto (SENTINEL IaC).
-        3.  **El pico de 33.5 segundos del test de estrés** se presenta como evidencia científica del límite del prototipo, justificando la propuesta de escalado horizontal en las conclusiones.
-        4.  **La instancia NAT/Proxy Squid** se defiende como una decisión de FinOps consciente (frente al NAT Gateway de AWS), no como una limitación.
-    #### ⚡ Prioridad 1: "Quick Wins" y Limpieza (Lo que haremos primero)
-    *   [ ] **Seguridad: Sacar credenciales del PHP.**
-        *   Update `secrets/config_sentinel_db.php` para usar `getenv()`.
-        *   Configurar variables en el OS del servidor web.
-    *   [ ] **Visual: Corregir Diagrama de Red (Figura 1).**
-        *   Abrir el `.drawio`.
-        *   Mover el **Servidor Web** fuera del recuadro de "Subred Pública" (debe estar en la Privada).
-        *   Regenerar el PDF/Imagen de la Figura 1.
-    *   [ ] **Documentación: Limpieza de Notas.**
-        *   Borrarlas de la `MEMORIA_FINAL.md` una vez esté todo listo para la entrega.
-
-    #### 📦 Prioridad 2: Mejoras de Infraestructura (Si hay tiempo/ganas)
-    *   [ ] **Migrar MariaDB a Amazon RDS Multi-AZ**
-        *   Seguir: `docs/02_guias_tecnicas/GUIA_MIGRACION_BASE_DE_DATOS_RDS.md`
-        *   Actualizar endpoint en `secrets/config_sentinel_db.php`.
-
-    #### 📋 Prioridad 3: Repaso Final
-    *   [ ] **Revisión de terminología técnica** en toda la memoria.
-    *   [ ] **Validación de enlaces** a bibliografía y anexos.<ctrl46>,StartLine:283,TargetContent:<ctrl46>        ### 🔴 Tareas Pendientes (Para la Próxima Semana)
-    
-    #### Prioridad 1 — Bloque de Datos (Alta Seguridad, Bajo Riesgo)
-    *   [ ] **Migrar MariaDB a Amazon RDS Multi-AZ**
-        *   Guía disponible en: `docs/02_guias_tecnicas/GUIA_MIGRACION_BASE_DE_DATOS_RDS.md`
-        *   Comando de volcado: `mysqldump --databases tienda_segura > backup_final.sql`
-        *   Tras la migración, actualizar `secrets/config_sentinel_db.php` con el nuevo endpoint de RDS.
-        *   **Estimación de tiempo:** 1 tarde (2-3 horas).
-    
-    #### Prioridad 2 — Gestión de Secretos (Seguridad)
-    *   [ ] **Mover credenciales a Variables de Entorno**
-        *   Editar `secrets/config_sentinel_db.php` para que lea con `getenv()` en lugar de tener la password en texto plano.
-        *   Declarar las variables en `/etc/environment` del servidor web.
-    
-    #### Prioridad 3 — Pendiente de Decisión del Autor
-    *   [ ] **¿Implementar ALB + ASG?** (Decisión posergada conscientemente)
-        *   Guía disponible en: `docs/02_guias_tecnicas/GUIA_DESPLIEGUE_ALTA_DISPONIBILIDAD_AWS.md`
-        *   Requiere: AMI del servidor web, Launch Template, Target Group, ALB y Auto Scaling Group.
-        *   Si se implementa, también se requiere **Amazon EFS** para sincronizar `app/uploads/` entre nodos.
-        *   **Conclusión de la sesión:** Se ha valorado el esfuerzo vs. beneficio académico. El proyecto ya cubre todos los módulos de ASIR con la arquitectura actual. La migración a ALB/ASG solo es necesaria para aspirar a Matrícula de Honor.<ctrl46>,TargetFile:<ctrl46>/home/avidal/TFG/docs/04_entregables_finales/MEMORIA_FINAL.md<ctrl46>,toolAction:<ctrl46>Updating session notes for Monday work.<ctrl46>,toolSummary:<ctrl46>Monday notes update<ctrl46>}

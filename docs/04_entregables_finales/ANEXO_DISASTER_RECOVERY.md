@@ -15,7 +15,7 @@ Este documento registra el procedimiento técnico y las evidencias visuales obte
 ## 🛠️ Fase 1: Estado Inicial (Antes del Desastre)
 Se verifica que la tienda e-commerce está operativa y sirviendo productos correctamente a través del balanceador HAProxy.
 
-> **[INSERTAR CAPTURA A: WEB FUNCIONANDO NORMALMENTE]**
+![Estado OK - Web Operativa](../img/evidencia_dr_estado_ok.png)
 > *Evidencia de que el sistema está en estado "Healthy" antes del incidente.*
 
 ---
@@ -25,7 +25,7 @@ Se procede al borrado forzoso de la base de datos `tienda_segura` mediante el co
 
 **Fallo del Servicio:** Al intentar acceder a la web, el sistema devuelve un error crítico de conexión a la base de datos, confirmando el escenario de desastre.
 
-> **[INSERTAR CAPTURA B: ERROR DE CONEXIÓN EN LA WEB]**
+![Estado ROTO - Error DB](../img/evidencia_dr_estado_roto.png)
 > *Evidencia del "Downtime" causado por la pérdida total de la base de datos.*
 
 ---
@@ -42,7 +42,7 @@ Se inicia el plan de recuperación descargando el último backup seguro desde el
 ## ✅ Fase 4: Validación y Resurrección del Servicio
 Tras la restauración exitosa, se verifica que la web vuelve a estar online y que la integridad de los datos (productos, usuarios, pedidos) es del 100%.
 
-> **[INSERTAR CAPTURA C: WEB RECUPERADA Y FUNCIONANDO]**
+![Estado RECUPERADO - Web Operativa](../img/evidencia_dr_estado_ok.png)
 > *Evidencia del restablecimiento del servicio tras aplicar el protocolo de Disaster Recovery.*
 
 ---
@@ -53,17 +53,17 @@ Para garantizar que la recuperación ha sido íntegra a nivel de sistema, se pre
 
 ### 1. Validación del Backup en la Nube (AWS S3)
 Muestra que los datos están seguros y versionados fuera de la infraestructura principal.
-> **[INSERTAR CAPTURA TERMINAL 1: Salida de 'aws s3 ls']**
+![Auditoría S3](../img/evidencia_aws_s3_bucket.png)
 > *Resultado: Archivo 'tienda_segura_2026-04-01.sql.gz' presente en S3.*
 
 ### 2. Integridad de Datos (MariaDB Búnker)
 Verificación del número de tablas y registros recuperados tras el proceso de restauración.
-> **[INSERTAR CAPTURA TERMINAL 2: Salida de 'SHOW TABLES' y 'COUNT(*) FROM productos']**
-> *Resultado: 100% de tablas recuperadas (productos, pedidos, usuarios).*
+![Auditoría Terminal - Integridad y Timers](../img/evidencia_dr_auditoria_terminal.png)
+> *Resultado: 100% de tablas recuperadas (productos, pedidos, usuarios) y timer activo.*
 
 ### 3. Automatización y Prevención (Systemd Timer)
 Demostración de que el sistema cuenta con una política de backup automatizada y autónoma.
-> **[INSERTAR CAPTURA TERMINAL 3: Salida de 'systemctl list-timers tfg-backup.timer']**
+*(Ver captura superior para validación de Systemd Timer)*
 > *Resultado: Timer activo y programado para el próximo ciclo de backup.*
 
 ---

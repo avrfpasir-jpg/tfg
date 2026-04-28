@@ -1,0 +1,94 @@
+FASE 5: EJECUCIÓN, VALIDACIÓN Y DOCUMENTACIÓN
+
+1. Contexto y objetivos de la fase
+
+Una vez completadas las fases de análisis, diseño, despliegue inicial y desarrollo avanzado, esta fase tiene como finalidad consolidar el proyecto mediante su puesta en funcionamiento definitiva, la validación integral del sistema y la generación de la documentación final.
+
+El objetivo principal es garantizar que la infraestructura de red implementada cumple con los requisitos definidos en la Fase 1 , se ajusta al diseño técnico de la Fase 2 , ha sido correctamente desplegada en la Fase 3 y optimizada en la Fase 4 .
+
+Además, se busca asegurar que el sistema es estable, seguro, escalable y mantenible, quedando preparado para su uso en un entorno real o simulado de producción.
+
+ 
+
+2. Tareas a realizar
+
+El equipo deberá abordar las siguientes líneas de trabajo:
+
+2.1. Ejecución final del sistema
+
+Puesta en marcha completa de todos los servicios desplegados:
+Servicios de red (DNS, DHCP, VPN, etc.).
+Sistemas de autenticación (LDAP/AD).
+Servicios web, bases de datos y monitorización.
+Verificación de la correcta integración entre todos los componentes.
+Aplicación final de configuraciones pendientes o ajustes detectados en fases previas.
+Validación de scripts de automatización e infraestructura como código (IaC).
+2.2. Validación funcional y técnica
+
+Se realizarán pruebas globales para comprobar el correcto funcionamiento del sistema:
+
+Pruebas funcionales:
+
+Acceso de usuarios a servicios (login, recursos compartidos, aplicaciones).
+Resolución de nombres, asignación de IP y conectividad.
+Funcionamiento de servicios web y aplicaciones internas.
+Pruebas técnicas:
+
+Verificación de rendimiento (latencia, uso de recursos).
+Pruebas de carga y estrés sobre servicios críticos.
+Validación de mecanismos de alta disponibilidad (failover, redundancia).
+Pruebas de seguridad:
+
+Escaneos de vulnerabilidades.
+Verificación de políticas de firewall y segmentación.
+Validación de autenticación, autorización y cifrado.
+Pruebas de recuperación:
+
+Restauración de copias de seguridad.
+Simulación de fallos (servidores, red).
+Validación de RTO y RPO definidos previamente.
+2.3. Validación de cumplimiento de requisitos
+
+Comparativa entre los requisitos iniciales (Fase 1) y los resultados obtenidos.
+Evaluación del grado de cumplimiento:
+Requisitos funcionales.
+Requisitos técnicos.
+Requisitos de seguridad y disponibilidad.
+Identificación de desviaciones y propuestas de mejora.
+2.4. Documentación técnica final
+
+Elaboración de la documentación completa del proyecto:
+
+Documentación de infraestructura:
+
+Diagramas finales de red (lógicos y físicos actualizados).
+Inventario de equipos, servicios y configuraciones.
+Direccionamiento IP y segmentación definitiva.
+Documentación de configuración:
+
+Procedimientos de instalación y despliegue.
+Configuración de servicios (servidores, red, seguridad).
+Scripts utilizados (automatización, backups, monitorización).
+Documentación operativa:
+
+Manual de administración del sistema.
+Procedimientos de mantenimiento (actualizaciones, revisiones).
+Guías de resolución de incidencias.
+Documentación de seguridad:
+
+Políticas aplicadas.
+Medidas de hardening implementadas.
+Resultados de auditorías y pruebas de seguridad.
+2.5. Evaluación final del proyecto
+
+Análisis global del proyecto:
+Cumplimiento de objetivos.
+Calidad técnica de la solución.
+Grado de automatización y optimización.
+Evaluación del trabajo en equipo:
+Distribución de roles.
+Coordinación y comunicación.
+Identificación de mejoras futuras:
+Escalabilidad.
+Nuevas funcionalidades.
+Optimización de costes.
