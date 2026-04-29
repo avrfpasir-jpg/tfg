@@ -280,13 +280,14 @@
 
         ---
         
-        ## 📌 ESTADO FINAL — CIERRE DE FASE 5 (22 de abril de 2026)
+        ## 📌 ESTADO FINAL — CIERRE DE FASE 5 (29 de abril de 2026)
         
         ### ✅ Hitos Alcanzados y Consolidados
         *   **Infraestructura Cloud:** Arquitectura Multi-Tier validada con ALB y RDS Multi-AZ.
-        *   **Seguridad (Hardening):** Credenciales de BD migradas exitosamente a variables de entorno (getenv) y aislamiento de red verificado entre segmentos.
-        *   **Monitorización:** Stack WPG (Wazuh, Prometheus, Grafana) operativo. Se ha corregido el fallo de estabilidad en el nodo de alertas.
-        *   **Validación DuckDNS:** Dominios `psicopompo.duckdns.org` y `statuspsicopompo.duckdns.org` resolviendo correctamente.
+        *   **Seguridad:** Hardening aplicado, aislamiento de subredes completado y mitigación de intrusiones probada.
+        *   **Monitorización:** Stack WPG operativo y estable. 
+        *   **Alerting Limpio y Proactivo:** Falsos positivos purgados (migración completada a RDS) y canal de notificaciones críticas integrado en Telegram.
+        *   **Validación Resoluciones:** Dominios `psicopompo` y `statuspsicopompo` (.duckdns.org) orquestados mediante script en cron.
         *   **Cierre de Pruebas:** Stress tests completados (59 RPS) y Disaster Recovery simulado con éxito.
         
         ### 💡 Decisiones Estratégicas Finales

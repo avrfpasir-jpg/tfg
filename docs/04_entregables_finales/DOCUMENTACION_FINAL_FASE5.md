@@ -12,6 +12,7 @@ Tras la consolidación del despliegue en AWS, la infraestructura operativa se co
 | Componente | Rol | IP Privada | IP Pública / DNS | Estado |
 | :--- | :--- | :--- | :--- | :--- |
 | **Sentinel-ALB** | Balanceador L7 | N/A | `psicopompo.duckdns.org` | ✅ Operativo (HTTP/HTTPS) |
+| **Squid Proxy** | NAT Salida | N/A | Público | ✅ Operativo |
 | **Web-Node-1** | Apache/PHP 8.5 | `10.0.1.250` | `13.220.133.172` | ✅ Operativo |
 | **Sentinel-Monitoring** | Grafana/Prometheus | `10.0.1.233` | `statuspsicopompo.duckdns.org` | ✅ Operativo |
 | **Sentinel-DB (RDS)** | MariaDB (Multi-AZ) | `10.0.0.242` | `database-sentinel...` | ✅ Operativo |
@@ -53,8 +54,6 @@ Se ha implementado y verificado un flujo completo de observabilidad proactiva:
 *   **Resultado:** Notificación confirmada en < 30s.
 
 ---
-
-## 3. Control de Incidencias y Mejoras Pendientes
 
 ## 3. Cierre de Incidencias y Mejoras Realizadas
 
