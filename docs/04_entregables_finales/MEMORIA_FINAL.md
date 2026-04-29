@@ -102,6 +102,7 @@
         *   **Auditoría de Vulnerabilidades:** Análisis de SQLi, XSS y RCE (protección del upload de archivos con `getimagesize`).
         *   **Gestión de Backups:** Scripting en Bash para volcados de MySQL y subida automática al bucket de S3 mediante **AWS CLI**.
         *   **Monitorización Avanzada:** Dashboard centralizado en Grafana unificando métricas de Apache y MySQL.
+        *   **Orquestación de DNS Dinámico:** Automatización de la resolución de nombres mediante scripts Bash (`update_duckdns.sh`) programados en `cron`, mitigando la volatilidad de IPs en el entorno cloud.
 
         ### 6.4. Recursos y tecnologías empleadas
         *   **Enfoque IaaS (Infraestructura como Servicio):** Control granular sobre HAProxy, MariaDB y Agentes de Seguridad.
@@ -170,6 +171,19 @@
 
         ![Panel de AWS S3 mostrando los archivos de backup](file:///home/avidal/TFG/docs/img/image%20copy.png)
         *Figura 6: Consola de AWS S3 visualizando el bucket `tfg-sentinel-backups-alex`. Se confirman los volcados `.sql.gz` generados de forma automatizada por el script `backup_db.sh`, garantizando la recuperación de la tienda en menos de 15 minutos ante un fallo total del clúster.*
+
+        ### 7.6. Estrategia de Alertas y Notificaciones Proactivas (Telegram)
+        Para garantizar una respuesta inmediata ante incidentes sin requerir la supervisión continua de los dashboards, se ha implementado un canal de notificaciones en tiempo real mediante **Telegram Messenger**.
+
+        *   **Justificación Técnica:** La integración del **Alertmanager** con un Bot de Telegram permite reducir el **MTTR (Mean Time To Repair)**, notificando al administrador en menos de 30 segundos tras la detección de una anomalía crítica (Caída de servicio, latencia alta en ALB o uso inusual de CPU en RDS).
+        *   **Flujo de Trabajo:** 
+            1. **Prometheus:** Evalúa las reglas de alerta (`alerts.yml`) cada 15 segundos.
+            2. **Alertmanager:** Recibe la alerta, la agrupa para evitar duplicados y aplica la lógica de ruteo.
+            3. **Telegram Bot API:** Entrega el mensaje formateado en HTML al grupo de administración de **SENTINEL**.
+        *   **Gestión de la Fatiga de Alertas:** Se han configurado diferentes niveles de severidad (`warning`, `critical`). Solo las alertas de nivel **critical** disparan la notificación inmediata a dispositivos móviles, mientras que las de tipo `warning` quedan registradas únicamente en el panel histórico de Grafana.
+
+        ![Captura de Alerta recibida en Telegram](file:///home/avidal/TFG/docs/img/evidencia_telegram_alerta.png)
+        *Figura 7: Ejemplo de notificación real recibida en el bot de SENTINEL. El mensaje incluye el servicio afectado, la severidad, una descripción detallada y la hora exacta de inicio del incidente.*
 
         ## 8. Conclusiones y Recomendaciones
         ### 8.1. Conclusiones

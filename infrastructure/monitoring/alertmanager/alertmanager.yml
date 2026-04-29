@@ -1,63 +1,43 @@
 # ============================================================
-#  Alertmanager - alertmanager.yml
-#  Notificaciones por email cuando Prometheus dispara alertas
+#  SENTINEL - Alertmanager (Telegram + Email Integration)
+#  Configurado para notificaciones en tiempo real
 # ============================================================
 
 global:
-  smtp_smarthost: '${SMTP_HOST}'
-  smtp_from: '${SMTP_FROM}'
-  smtp_auth_username: '${SMTP_USER}'
-  smtp_auth_password: '${SMTP_PASS}'
-  smtp_require_tls: true
   resolve_timeout: 5m
 
-# Plantillas de mensaje
-templates:
-  - '/etc/alertmanager/templates/*.tmpl'
-
-# Árbol de enrutado de alertas
 route:
-  group_by: ['alertname', 'instance']
+  group_by: ['alertname', 'instance', 'severity']
   group_wait: 30s
   group_interval: 5m
-  repeat_interval: 4h
-  receiver: 'email-admin'
+  repeat_interval: 2h
+  receiver: 'telegram-admin'
 
   routes:
-    # Alertas críticas: notificación inmediata
+    # Las alertas críticas van siempre a Telegram de forma inmediata
     - match:
         severity: critical
-      receiver: 'email-admin'
+      receiver: 'telegram-admin'
       group_wait: 10s
       repeat_interval: 1h
 
-    # Alertas de warning: agrupadas
-    - match:
-        severity: warning
-      receiver: 'email-admin'
-      repeat_interval: 4h
-
 receivers:
-  - name: 'email-admin'
-    email_configs:
-      - to: '${SMTP_TO}'
+  - name: 'telegram-admin'
+    telegram_configs:
+      - bot_token: '8054315854:AAHUDCRz0QyucnXoGQi-eai5eb3bY-6FEeI'
+        chat_id: 8798461982
         send_resolved: true
-        headers:
-          Subject: '[SENTINEL] {{ .Status | toUpper }} - {{ .CommonAnnotations.summary }}'
-        html: |
-          <h2>🛡️ SENTINEL - Alerta de Monitorización</h2>
-          <p><b>Estado:</b> {{ .Status | toUpper }}</p>
+        parse_mode: 'HTML'
+        message: |
+          {{ if eq .Status "firing" }}<b>🚨 ALERTA CRÍTICA EN SENTINEL</b>{{ else }}<b>✅ ALERTA RESUELTA</b>{{ end }}
+          
+          <b>Servicio:</b> {{ .CommonLabels.alertname }}
+          <b>Severidad:</b> {{ .CommonLabels.severity | toUpper }}
+          
           {{ range .Alerts }}
-          <hr>
-          <p><b>Alerta:</b> {{ .Annotations.summary }}</p>
-          <p><b>Descripción:</b> {{ .Annotations.description }}</p>
-          <p><b>Instancia:</b> {{ .Labels.instance }}</p>
-          <p><b>Severidad:</b> {{ .Labels.severity }}</p>
+          📌 <b>Detalles:</b> {{ .Annotations.description }}
+          🖥️ <b>Instancia:</b> {{ .Labels.instance }}
+          ⏰ <b>Inicio:</b> {{ .StartsAt.Format "15:04:05" }}
           {{ end }}
-
-inhibit_rules:
-  - source_match:
-      severity: 'critical'
-    target_match:
-      severity: 'warning'
-    equal: ['instance']
+          
+          <i>-- Sentinel Monitoring System --</i>

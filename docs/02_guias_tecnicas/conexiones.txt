@@ -3,18 +3,18 @@
 # ==========================================
 
 # 1. Servidor Web (Apache/PHP)
-# $IP_PUBLICA=13.218.171.184
+# $IP_PUBLICA=53.208.12.11
 # IP Privada: 10.0.1.250
 ssh -i "llaves-debian13.pem" ec2-user@$IP_PUBLICA
 
 
 # 3. Servidor Wazuh Manager (SIEM)
-# $IP_PUBLICA=
+# $IP_PUBLICA=54.234.113.169
 # IP Privada: 10.0.1.170
 ssh -i "llaves-debian13.pem" ubuntu@$IP_PUBLICA
 
 # 4. Servidor Monitorización (Grafana/Prometheus/Loki)
-# $IP_PUBLICA=3.95.206.104
+# $IP_PUBLICA=54.174.199.231
 # IP Privada: 10.0.1.233
 ssh -i "llaves-debian13.pem" ubuntu@$IP_PUBLICA
 

@@ -1,79 +1,70 @@
 # ============================================================
-#  Prometheus - Reglas de Alertas para SENTINEL
+#  SENTINEL - Reglas de Alertas Optimizadas (Hybrid Cloud)
 # ============================================================
 
 groups:
-  # ── Disponibilidad de instancias ──────────────────────────
-  - name: availability
+  # ── Estado de Conectividad ──────────────────────────────────
+  - name: connectivity
     rules:
-      - alert: InstanceDown
+      - alert: ServerOffline
         expr: up == 0
         for: 1m
         labels:
           severity: critical
         annotations:
-          summary: "Instancia caída: {{ $labels.instance }}"
-          description: "{{ $labels.job }} en {{ $labels.instance }} lleva más de 1 minuto sin responder."
+          summary: "Servidor caído: {{ $labels.instance }}"
+          description: "La instancia {{ $labels.instance }} no responde al monitoreo."
 
-  # ── Recursos del sistema ───────────────────────────────────
-  - name: system_resources
+  # ── Recursos Locales (EC2) ──────────────────────────────────
+  - name: host_resources
     rules:
-      - alert: HighCPUUsage
+      - alert: HostHighCPU
         expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 85
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Carga crítica en {{ $labels.instance }}"
+          description: "La CPU está al {{ $value | printf \"%.2f\" }}%."
+
+      - alert: HostHighRAM
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 90
         for: 2m
         labels:
           severity: warning
         annotations:
-          summary: "CPU alta en {{ $labels.instance }}"
-          description: "CPU al {{ humanize $value }}% durante más de 2 minutos."
+          summary: "Memoria agotándose en {{ $labels.instance }}"
+          description: "RAM al {{ $value | printf \"%.2f\" }}%."
 
-      - alert: HighMemoryUsage
-        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
-        for: 2m
-        labels:
-          severity: warning
-        annotations:
-          summary: "RAM alta en {{ $labels.instance }}"
-          description: "Memoria al {{ humanize $value }}% de uso."
-
-      - alert: DiskSpaceLow
-        expr: (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) * 100 < 15
+  # ── Alertas de AWS (Hybrid Monitoring) ─────────────────────
+  - name: aws_alerts
+    rules:
+      - alert: RDSCPUUnusual
+        expr: aws_rds_cpuutilization_average > 80
         for: 5m
         labels:
           severity: warning
         annotations:
-          summary: "Poco espacio en disco: {{ $labels.instance }}"
-          description: "Queda menos del 15% de espacio libre en {{ $labels.mountpoint }}."
+          summary: "AWS RDS: Carga inusual"
+          description: "La base de datos Sentinel-RDS ha superado el 80% de CPU."
 
-  # ── Base de datos ─────────────────────────────────────────
-  - name: database
-    rules:
-      - alert: MariaDBDown
-        expr: mysql_up == 0
-        for: 30s
-        labels:
-          severity: critical
-        annotations:
-          summary: "¡MariaDB caída en {{ $labels.instance }}!"
-          description: "El servicio MariaDB no responde. Acción inmediata requerida."
-
-      - alert: MariaDBHighConnections
-        expr: mysql_global_status_threads_connected / mysql_global_variables_max_connections * 100 > 80
-        for: 2m
+      - alert: ALBLatencyHigh
+        expr: avg(aws_applicationelb_target_response_time_average) > 1.5
+        for: 3m
         labels:
           severity: warning
         annotations:
-          summary: "Muchas conexiones MariaDB en {{ $labels.instance }}"
-          description: "Uso de conexiones al {{ humanize $value }}%."
+          summary: "AWS ALB: Latencia detectada"
+          description: "El balanceador de carga está tardando más de 1.5s en responder."
 
-  # ── Apache ────────────────────────────────────────────────
-  - name: web
+  # ── Servicios de Aplicación ────────────────────────────────
+  - name: app_services
     rules:
-      - alert: ApacheDown
+      - alert: WebServerDown
         expr: apache_up == 0
         for: 30s
         labels:
           severity: critical
         annotations:
-          summary: "¡Apache caído en {{ $labels.instance }}!"
-          description: "El servidor web no responde."
+          summary: "¡Servicio Apache Caído!"
+          description: "El servidor de la tienda Psicopompo en {{ $labels.instance }} ha dejado de servir tráfico web."

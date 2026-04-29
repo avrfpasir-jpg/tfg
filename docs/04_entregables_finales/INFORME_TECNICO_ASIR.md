@@ -50,15 +50,15 @@ Este documento detalla la infraestructura técnica del proyecto **SENTINEL (Tien
 
 ### 🌍 Servicios de Red e Internet (SRI)
 *   **Implementación:**
-    *   **DNS Dinámico:** Uso de **DuckDNS** para la resolución de dominios públicos.
+    *   **DNS Dinámico Automatizado:** Implementación de un sistema de sincronización automática mediante **DuckDNS** y scripts en **Bash**, garantizando que el dominio siempre apunte a las IPs cambiantes de AWS.
     *   **Protocolos Seguros:** Certificados **SSL/TLS (HTTPS)** mediante **Let's Encrypt** gestionados en el balanceador.
     *   **Proxy/NAT:** Configuración de un Proxy Squid para permitir actualizaciones seguras en la subred aislada.
 *   **Competencia:** Configuración de servicios de resolución de nombres, transferencia de archivos y correo.
 
 ### 🛠️ Administración de Sistemas Operativos (ASO)
 *   **Implementación:**
-    *   **Automatización:** Scripts en **Bash** para la gestión de copias de seguridad y auditoría de logs.
-    *   **Programación de tareas:** Uso de **Systemd Timers** para ejecutar procesos periódicos de mantenimiento hacia **AWS S3**.
+    *   **Automatización:** Scripts en **Bash** para la gestión de copias de seguridad, auditoría de logs y **sincronización dinámica de DNS**.
+    *   **Programación de tareas:** Uso de **Cron Jobs** y **Systemd Timers** para ejecutar procesos periódicos de mantenimiento (DNS Update cada 5 min y backups hacia AWS S3).
 *   **Competencia:** Automatización de tareas administrativas mediante lenguajes de script.
 
 ---

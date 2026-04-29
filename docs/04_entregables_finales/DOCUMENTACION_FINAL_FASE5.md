@@ -45,6 +45,13 @@ El nodo manager ya es alcanzable y está procesando eventos de los agentes.
 *   **Acción:** Se corrigió la regla del Security Group que bloqueaba el tráfico entrante al puerto 1514/1515.
 *   **Resultado:** Detección de intrusiones operativa y visualización confirmada en el dashboard de Grafana.
 
+
+### 2.6 Validación del Sistema de Alerting y Notificaciones (Telegram)
+Se ha implementado y verificado un flujo completo de observabilidad proactiva:
+*   **Integración:** El **Alertmanager** envía avisos críticos vía Telegram Bot API.
+*   **Gestión de Cambios:** Se validó la purga de alertas obsoletas tras la migración a **RDS**, eliminando falsos positivos de `Tienda-DB-Server`.
+*   **Resultado:** Notificación confirmada en < 30s.
+
 ---
 
 ## 3. Control de Incidencias y Mejoras Pendientes

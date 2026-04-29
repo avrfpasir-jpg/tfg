@@ -43,21 +43,6 @@ scrape_configs:
           instance: 'Tienda-Web-Server'
           role: 'web'
 
-  # -- Servidor DB (IP privada estable) ----------------------
-  - job_name: 'db-node'
-    static_configs:
-      - targets: ['${DB_PRIVATE_IP}:9100']
-        labels:
-          instance: 'Tienda-DB-Server'
-          role: 'database'
-
-  - job_name: 'db-mariadb'
-    static_configs:
-      - targets: ['${DB_PRIVATE_IP}:9104']
-        labels:
-          instance: 'Tienda-DB-Server'
-          role: 'database'
-
   # -- Wazuh Manager (métricas propias via node_exporter) ----
   - job_name: 'wazuh-node'
     static_configs:

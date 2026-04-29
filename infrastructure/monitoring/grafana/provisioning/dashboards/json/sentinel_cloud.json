@@ -1,91 +1,111 @@
 {
-  "annotations": {
-    "list": [
-      {
-        "builtIn": 1,
-        "datasource": "-- Grafana --",
-        "enable": true,
-        "hide": true,
-        "iconColor": "rgba(0, 211, 255, 1)",
-        "name": "Annotations & Alerts",
-        "type": "dashboard"
-      }
-    ]
-  },
+  "annotations": { "list": [{ "builtIn": 1, "datasource": "-- Grafana --", "enable": true, "hide": true, "iconColor": "rgba(0, 211, 255, 1)", "name": "Annotations & Alerts", "type": "dashboard" }] },
   "editable": true,
   "fiscalYearStartMonth": 0,
-  "graphTooltip": 0,
+  "graphTooltip": 1,
   "id": null,
   "links": [],
-  "liveNow": false,
   "panels": [
     {
-      "title": "Actividad del Balanceador (ALB)",
-      "type": "row",
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 }
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 100,
+      "panels": [],
+      "title": "🛰️ RESUMEN EJECUTIVO DE INFRAESTRUCTURA",
+      "type": "row"
     },
     {
-      "title": "Peticiones (Request Count)",
-      "type": "timeseries",
-      "datasource": "Prometheus",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 1 },
-      "targets": [{ "expr": "aws_applicationelb_request_count_sum", "refId": "A" }]
-    },
-    {
-      "title": "Tiempo de Respuesta (Response Time)",
-      "type": "timeseries",
-      "datasource": "Prometheus",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 1 },
-      "targets": [{ "expr": "aws_applicationelb_target_response_time_average", "refId": "A" }]
-    },
-    {
-      "title": "Salud de Servidores Web (Auto-Scaling)",
-      "type": "row",
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 9 }
-    },
-    {
-      "title": "Servidores Activos",
+      "title": "Tráfico Total (ALB)",
       "type": "stat",
       "datasource": "Prometheus",
-      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 10 },
-      "targets": [{ "expr": "count(up{role=\"web\"} == 1) or vector(0)", "refId": "A" }]
+      "gridPos": { "h": 5, "w": 6, "x": 0, "y": 1 },
+      "options": { "colorMode": "background", "graphMode": "area", "justifyMode": "center", "textMode": "value_and_name" },
+      "fieldConfig": { "defaults": { "unit": "req", "noValue": "0" } },
+      "targets": [{ "expr": "sum(aws_applicationelb_request_count_sum)", "refId": "A" }]
     },
     {
-      "title": "Carga CPU (Web Nodes)",
+      "title": "Latencia Crítica (p90)",
+      "type": "stat",
+      "datasource": "Prometheus",
+      "gridPos": { "h": 5, "w": 6, "x": 6, "y": 1 },
+      "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "center" },
+      "fieldConfig": { "defaults": { "unit": "s", "noValue": "0.00" } },
+      "targets": [{ "expr": "avg(aws_applicationelb_target_response_time_average)", "refId": "A" }]
+    },
+    {
+      "title": "Nodos Web Operativos",
+      "type": "stat",
+      "datasource": "Prometheus",
+      "gridPos": { "h": 5, "w": 6, "x": 12, "y": 1 },
+      "options": { "colorMode": "background", "graphMode": "none" },
+      "fieldConfig": { "defaults": { "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] } } },
+      "targets": [{ "expr": "count(up{role=\"web\"} == 1)", "refId": "A" }]
+    },
+    {
+      "title": "Sucesos de Seguridad (Hoy)",
+      "type": "stat",
+      "datasource": { "type": "grafana-opensearch-datasource", "uid": "wazuh_ds" },
+      "gridPos": { "h": 5, "w": 6, "x": 18, "y": 1 },
+      "options": { "colorMode": "background" },
+      "fieldConfig": { "defaults": { "noValue": "0", "color": { "mode": "fixed", "fixedColor": "dark-red" } } },
+      "targets": [{ 
+        "alias": "Alertas", "query": "rule.level:>0", "refId": "A",
+        "metrics": [{ "type": "count", "id": "1" }],
+        "bucketAggs": [{ "type": "date_histogram", "id": "2", "field": "@timestamp", "settings": { "interval": "auto" } }]
+      }]
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 6 },
+      "title": "🔥 RENDIMIENTO Y CARGA EN TIEMPO REAL",
+      "type": "row"
+    },
+    {
+      "title": "Carga de CPU (Nodos Infraestructura)",
       "type": "timeseries",
       "datasource": "Prometheus",
-      "gridPos": { "h": 8, "w": 18, "x": 6, "y": 10 },
-      "targets": [{ "expr": "100 - (avg by (instance) (rate(node_cpu_seconds_total{role=\"web\", mode=\"idle\"}[5m])) * 100)", "legendFormat": "{{instance}}", "refId": "A" }]
+      "gridPos": { "h": 8, "w": 16, "x": 0, "y": 7 },
+      "fieldConfig": { "defaults": { "custom": { "fillOpacity": 20, "gradientMode": "area" }, "unit": "percent" } },
+      "targets": [{ "expr": "100 - (avg by (instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)", "legendFormat": "{{instance}}", "refId": "A" }]
     },
     {
-      "title": "Monitorización de Base de Datos (RDS)",
-      "type": "row",
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 18 }
-    },
-    {
-      "title": "RDS CPU Utilization",
+      "title": "Estado RDS MariaDB",
       "type": "gauge",
       "datasource": "Prometheus",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 19 },
-      "targets": [{ "expr": "aws_rds_cpuutilization_average", "refId": "A" }],
-      "fieldConfig": { "defaults": { "min": 0, "max": 100 } }
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 7 },
+      "fieldConfig": { "defaults": { "min": 0, "max": 100, "unit": "percent", "noValue": "...", "thresholds": { "mode": "absolute", "steps": [{ "color": "blue", "value": null }, { "color": "red", "value": 85 }] } } },
+      "targets": [{ "expr": "max(aws_rds_cpuutilization_average)", "refId": "A" }]
     },
     {
-      "title": "RDS Conexiones Activas",
-      "type": "timeseries",
-      "datasource": "Prometheus",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 19 },
-      "targets": [{ "expr": "aws_rds_database_connections_average", "refId": "A" }]
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 15 },
+      "title": "🛡️ VIGILANCIA SIEM & ALARMAS ACTIVAS",
+      "type": "row"
+    },
+    {
+      "title": "Registro Crítico de Amenazas",
+      "type": "logs",
+      "datasource": { "type": "grafana-opensearch-datasource", "uid": "wazuh_ds" },
+      "gridPos": { "h": 8, "w": 14, "x": 0, "y": 16 },
+      "targets": [{ "query": "rule.level:>0", "refId": "A", "metrics": [{ "type": "logs", "id": "1" }], "queryType": "lucene" }]
+    },
+    {
+      "title": "🔔 Estado de Alarmas (Prometheus)",
+      "type": "alertlist",
+      "gridPos": { "h": 8, "w": 10, "x": 14, "y": 16 },
+      "options": {
+        "show": "current",
+        "sortOrder": 1,
+        "dashboardAlerts": true,
+        "stateFilter": { "firing": true, "pending": true }
+      }
     }
   ],
   "schemaVersion": 38,
   "style": "dark",
-  "tags": ["sentinel", "aws", "cloudwatch"],
-  "templating": { "list": [] },
-  "time": { "from": "now-3h", "to": "now" },
-  "timepicker": {},
-  "timezone": "",
-  "title": "Sentinel - Enterprise Cloud Dashboard",
-  "uid": "sentinel-cloud",
-  "version": 1
+  "tags": ["sentinel", "final", "soc", "alerts"],
+  "time": { "from": "now-6h", "to": "now" },
+  "title": "SENTINEL - Hybrid SOC Dashboard",
+  "uid": "sentinel-hybrid-soc-final",
+  "version": 9
 }

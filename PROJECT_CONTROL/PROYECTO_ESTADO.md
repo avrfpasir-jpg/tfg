@@ -15,10 +15,14 @@ Desplegar una **Infraestructura Empresarial Segura y Replicable** (Secure Landin
 - [x] **Seguridad Activa:** Ciclo de detección y bloqueo automático de ataques SSH (Active Response).
 - [x] **Balanceo de Carga:** SSL Termination configurado en AWS ALB con redirección forzada a HTTPS.
 - [x] **Plan de Disaster Recovery:** Backups automatizados hacia AWS S3 con simulacro de restauración validado.
-- [x] **Observabilidad Centralizada:** Métricas de CPU/RAM, Tráfico Web y Alertas SIEM en un único panel de Grafana.
+- [x] **Observabilidad Centralizada:** Métricas de CloudWatch (RDS/ALB) y Alertas SIEM en Grafana.
+- [x] **Alerting Activo:** Notificaciones automáticas a Telegram integradas.
 
-## 📋 Backlog de Tareas Pendientes (Priorizado)
-1.  **🚀 [PRIORIDAD ALTA] Automatización IaC:** Crear el esqueleto de Terraform para permitir el despliegue "One-Click".
-2.  **🔒 [SEGURIDAD] Hardening de Secretos:** Migrar credenciales de BD de archivos `.php` a variables de entorno o AWS Secrets Manager.
-3.  **📡 [REDES] Egress Control:** Refinar las reglas del Proxy Squid para auditoría total de tráfico saliente.
-4.  **📈 [ESCALABILIDAD] Roadmap HA:** Documentar la configuración de Auto Scaling Groups para los nodos web.
+## 📋 Backlog de Tareas (Próxima Sesión)
+1.  **🛠️ Recubrimiento Post-Estrés:** Reiniciar `Apache` en `10.0.1.250` (usando `ec2-user`).
+2.  **🛡️ Hardening Final:** Revisar permisos de llaves en el nodo de monitoreo.
+3.  **📸 Captura de Defensa:** Generar 30 mins de tráfico limpio para métricas finales.
+
+## 🚀 Futuro (Post-Hito)
+1.  **Automatización IaC:** Terraform para despliegue "One-Click".
+2.  **Hardening de Secretos:** AWS Secrets Manager para credenciales.

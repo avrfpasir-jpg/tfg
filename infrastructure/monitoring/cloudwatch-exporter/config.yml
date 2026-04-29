@@ -1,59 +1,41 @@
 apiVersion: v1alpha1
 sts-region: us-east-1
 
-discovery:
-  exportedTagsOnMetrics:
-    AWS/RDS:
-      - Name
-    AWS/ApplicationELB:
-      - Name
-  jobs:
-    - type: AWS/RDS
-      regions:
-        - us-east-1
-      metrics:
-        - name: CPUUtilization
-          statistics: [Average]
-          period: 60
-          length: 600
-        - name: DatabaseConnections
-          statistics: [Average]
-          period: 60
-          length: 600
-        - name: FreeStorageSpace
-          statistics: [Average]
-          period: 60
-          length: 600
-        - name: ReadIOPS
-          statistics: [Average]
-          period: 60
-          length: 600
-        - name: WriteIOPS
-          statistics: [Average]
-          period: 60
-          length: 600
+static:
+  - name: rds_metrics
+    namespace: AWS/RDS
+    regions:
+      - us-east-1
+    dimensions:
+      - name: DBInstanceIdentifier
+        value: database-sentinel
+    metrics:
+      - name: CPUUtilization
+        statistics: [Average]
+        period: 60
+        length: 600
+      - name: DatabaseConnections
+        statistics: [Average]
+        period: 60
+        length: 600
+      - name: FreeStorageSpace
+        statistics: [Average]
+        period: 60
+        length: 600
 
-    - type: AWS/ApplicationELB
-      regions:
-        - us-east-1
-      metrics:
-        - name: RequestCount
-          statistics: [Sum]
-          period: 60
-          length: 600
-        - name: TargetResponseTime
-          statistics: [Average]
-          period: 60
-          length: 600
-        - name: HTTPCode_Target_2XX_Count
-          statistics: [Sum]
-          period: 60
-          length: 600
-        - name: HTTPCode_Target_5XX_Count
-          statistics: [Sum]
-          period: 60
-          length: 600
-        - name: ActiveConnectionCount
-          statistics: [Sum]
-          period: 60
-          length: 600
+  - name: alb_metrics
+    namespace: AWS/ApplicationELB
+    regions:
+      - us-east-1
+    dimensions:
+      - name: LoadBalancer
+        value: app/Sentinel-ALB/b5f600e0080669d3
+    metrics:
+      - name: RequestCount
+        statistics: [Sum]
+        period: 60
+        length: 600
+      - name: TargetResponseTime
+        statistics: [Average]
+        period: 60
+        length: 600

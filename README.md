@@ -1,64 +1,122 @@
-# 🛡️ Proyecto SENTINEL — Tienda Segura (Psicopompo)
-[![AWS](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/)
-[![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://www.php.net/)
-[![Wazuh](https://img.shields.io/badge/Wazuh-00a9e0?style=for-the-badge&logo=wazuh&logoColor=white)](https://wazuh.com/)
-[![Grafana](https://img.shields.io/badge/Grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white)](https://grafana.com/)
+# 🛡️ SENTINEL (Tienda Segura)
 
-**SENTINEL** es una infraestructura cloud de nivel empresarial diseñada para alojar la aplicación e-commerce **Psicopompo**. Este TFG (Trabajo de Fin de Grado) se centra en la creación de un entorno búnker que combina alta disponibilidad, monitorización en tiempo real y respuesta activa ante amenazas.
+![AWS Architecture](https://img.shields.io/badge/AWS-Infrastructure-FF9900?logo=amazonaws&logoColor=white)
+![Security](https://img.shields.io/badge/Security-Zero%20Trust-red)
+![Observability](https://img.shields.io/badge/Observability-WPG_Stack-blue)
+![Status](https://img.shields.io/badge/Status-100%25_Completed-success)
 
----
+## 1. Executive Summary
 
-## 🏗️ Arquitectura del Sistema (Multi-Tier)
-La infraestructura está diseñada bajo el principio de **Defensa en Profundidad**, segmentando la red en AWS para aislar la lógica de negocio y los datos sensibles del acceso directo desde Internet.
+**SENTINEL** es una infraestructura cloud de grado industrial desplegada en Amazon Web Services (AWS), operando bajo los paradigmas de **Defensa en Profundidad (Defense in Depth)** y **Zero Trust**. 
 
-![Arquitectura de Red](docs/img/Diagrama%20Actualizado.drawio.svg)
-
-| Capa | Componente | Descripción |
-| :--- | :--- | :--- |
-| **Perímetro** | AWS ALB | Balanceo de carga L7 y terminación SSL/TLS (Let's Encrypt). |
-| **Aplicación** | Apache / PHP 8 | Servidores web en subredes privadas sin IP pública. |
-| **Datos** | Amazon RDS MariaDB | Base de datos Multi-AZ con cifrado y backups automáticos. |
-| **Seguridad** | Wazuh SIEM | Detección de intrusiones (HIDS) y respuesta activa. |
-| **Observabilidad** | Stack WPG | Grafana, Prometheus y Loki para métricas y logs. |
+Este proyecto implementa una solución *e-commerce* ("Psicopompo") altamente resiliente donde la seguridad y la observabilidad no son ideas de último momento, sino pilares fundacionales. Cada capa del despliegue (red, computación, aplicación y datos) ha sido aislada, monitorizada y asegurada proactivamente para garantizar la máxima disponibilidad tecnológica con un índice de exposición minimizado.
 
 ---
 
-## 🛡️ Pilares de Seguridad
-*   **Búnker Networking:** Control estricto de tráfico saliente mediante un **Proxy Squid** y Security Groups altamente granulares.
-*   **Respuesta Activa:** Integración de Wazuh para el bloqueo dinámico de ataques de fuerza bruta (MITRE ATT&CK Mapping).
-*   **Gestión de Secretos:** Aislamiento total de credenciales y llaves `.pem` de la infraestructura.
-*   **Cifrado Total:** HTTPS forzado en todo el flujo mediante redirección 301 en el balanceador.
+## 2. Infraestructura como Servicio (IaaS) y Topología de Red
+
+La arquitectura descansa sobre una nube privada virtual (**VPC `10.0.0.0/16`**) segmentada estrictamente bajo un modelo **TIER-2**:
+
+*   **Public Tier (Ingress):** Un único punto de exposición hacia internet. Aloja únicamente el Elastic Load Balancer (AWS ALB).
+*   **Private Tier (Compute & Data):** Nodos completamente aislados sin visibilidad externa enrutable.
+
+### Tabla de Direccionamiento y Componentes Core
+
+| Nodo / Servicio | Rol | IP Privada (CIDR VPC) | Estado y Exposición |
+| :--- | :--- | :--- | :--- |
+| **Sentinel-ALB** | Balanceador L7 & SSL Termination | Dinámica | Público (`psicopompo.duckdns.org`) |
+| **Web-Node-1** | Aplicación: Apache/PHP 8.2 | `10.0.1.250` | Privado |
+| **Sentinel-DB** | Base de Datos: Amazon RDS (MariaDB) | `10.0.0.242` | Privado |
+| **Wazuh-Manager**| SIEM Security Hub | `10.0.1.170` | Privado |
+| **Sentinel-Mon**| Stack Observabilidad (WPG) | `10.0.1.233` | Privado/Público (`statuspsicopompo...`) |
+
+### Evolución de la Capa de Datos: El salto a Amazon RDS
+
+> [!NOTE]
+> **EC2 vs RDS: Justificación Estratégica**
+
+| Métrica Analizada | Estado Anterior (EC2 Nativo) | Estado Actual (Amazon RDS) | Impacto / Justificación del Diseño |
+| :--- | :--- | :--- | :--- |
+| **Resiliencia (SPOF)** | Nodo único. Su caída implicaba Downtime Total. | Multi-AZ Ready. Arquitectura Desacoplada. | *Eliminación del Single Point of Failure en la capa de datos.* |
+| **Gestión (Overhead)** | Requiere parcheo de SO y afino de MariaDB manual. | AWS Fully Managed, parches automatizados. | *Reducción drástica de carga cognitiva y administrativa (Toil operations).* |
 
 ---
 
-## 📊 Observabilidad y Rendimiento
-El sistema no solo es seguro, sino que es **visible**. Monitorizamos cada petición y cada proceso para garantizar la estabilidad del negocio.
+## 3. Análisis de Configuración y Código
 
-![Grafana Dashboard](docs/img/evidencia_cpu_ram_test2.png)
+### 3.1. Orquestación DNS Dinámica (Desacoplando el Ingress)
 
-### Métricas Clave Validadas:
-- **Rendimiento Máximo:** 59.01 peticiones por segundo (RPS).
-- **Latencia p90:** < 384 ms en condiciones de carga.
-- **Resiliencia:** RTO (Tiempo de recuperación) < 15 minutos mediante backups automáticos en **AWS S3**.
+En entornos educativos o elásticos donde las Elastic IPs son limitadas, dependemos de IPs dinámicas. Para garantizar siempre la resolución del dominio frente a caídas o reinicios del balanceador, se ha diseñado este script de actualización persistente acoplado vía `cron`:
+
+```bash
+#!/bin/bash
+# Update DuckDNS for ALB dynamically
+ALB_DNS="Sentinel-ALB-891619477.us-east-1.elb.amazonaws.com"
+IPS=$(nslookup $ALB_DNS | grep "Address" | awk '{print $2}')
+WORKING_IP=$(echo $IPS | awk '{print $1}')
+curl -s "https://www.duckdns.org/update?domains=$DOMAIN&token=$TOKEN&ip=$WORKING_IP"
+```
+*Justificación:* Esto transforma un entorno inestable de laboratorio en una arquitectura determinista y confiable a nivel de red pública.
+
+### 3.2. Despliegue Elástico del Sistema de Observabilidad
+
+El stack Docker que procesa las métricas es agnóstico del direccionamiento gracias al uso de inyección de configuración temporal pre-reinicio (`start.sh`):
+
+```bash
+#!/bin/bash
+# 1. Cargar variables del entorno .env
+export $(grep -v '^#' .env | xargs)
+
+# 2. Generar prometheus.yml inyectando la topología actual
+envsubst < prometheus/prometheus.yml.template > prometheus/prometheus.yml
+
+# 3. Levantar stack
+docker compose up -d
+```
+*Justificación:* Permite reciclar o destruir servidores EC2 sin afectar el pipeline de CI/CD del clúster de monitorización; la infraestructura se declara en el `.env` y el stack se auto-adapta en cada *restart*.
+
+### 3.3. Políticas de Hardening (Capa de Aplicación)
+Se han aplicado severas restricciones al stack LAMP:
+*   **Permisos base:** `chown -R ubuntu:www-data`, `chmod 755` para directorios, `chmod 644` para ficheros.
+*   **Aseguramiento Web:** Ocultación de tokens y firmas (`ServerTokens Prod`, `ServerSignature Off`), mitigaciones contra XSS y Clickjacking incorporadas nativamente en la configuración de Apache.
 
 ---
 
-## 📁 Estructura del Repositorio
-*   [`/app`](app): Código fuente de la tienda Psicopompo (PHP/MySQL).
-*   [`/infrastructure`](infrastructure): Scripts de automatización, configuraciones de monitoreo y base de datos.
-*   [`/docs`](docs): Documentación completa del proyecto (Memorias, Manuales, Informes ASIR).
-*   [`/PROJECT_CONTROL`](PROJECT_CONTROL): Archivos de gestión estratégica (Estado, Decisiones, Workflows).
-*   [`/secrets`](secrets): (Ignorado en Git) Almacén de llaves `.pem` y credenciales sensibles.
+## 4. Capa de Seguridad y Respuesta Autómata (SIEM)
+
+En vez de una monitorización pasiva, SENTINEL aplica un modelo predictivo-reactivo usando **Wazuh SIEM**. 
+
+*   **Mitigación de OWASP Top 10:** Monitorización de trazas e intrusiones de red mediante análisis en tiempo real de los logs de Apache y autenticación de sistemas (SQLi, LFI, Código arbitrario, Path Traversal).
+*   **Active Response (IPS - Sistema de Prevención de Intrusiones):** Flujo de seguridad automatizado de tres fases sin intervención humana (Zero-touch mitigation):
+    1.  *Detección:* El agente de Wazuh detecta un patrón anómalo de ataques masivos, p.ej. Fuerza Bruta SSH / HTTP.
+    2.  *Análisis:* El Manager coteja la severidad con sus reglas de correlación e hilos de MITRE ATT&CK.
+    3.  *Ejecución:* Envío de orden de remediación (`firewall-drop`) contra la IP atacante, generando bloqueos por `IPTABLES` directamente en el nodo Edge.
+
+> [!WARNING]
+> **Gestión de Security Groups**
+> Para que el flujo de remediación y monitoreo sea resiliente, el mapeo de **Security Groups** es fundamental. Puerto `1514/TCP/UDP` y `1515/TCP` abiertos explícitamente y delimitados para que Wazuh interactúe únicamente entre la capa privada de computación.
 
 ---
 
-## 🛠️ Tecnologías Utilizadas
-*   **Infraestructura:** AWS (VPC, EC2, RDS, S3, ALB).
-*   **SO & Servicios:** Amazon Linux 2023, Ubuntu, Apache, MariaDB, PHP 8.2.
-*   **Seguridad:** Wazuh SIEM, Fail2Ban, Netfilter/Iptables.
-*   **Monitorización:** Prometheus, Grafana, Loki, Node Exporter.
-*   **Herramientas:** Terraform (Roadmap), Docker, Bash Scripting.
+## 5. Telemetría, Métricas y Alerting
+
+> [!TIP]
+> **Resolución de Alta Concurrencia**
+> Durante los tests de carga controlada (*Apache Benchmark*: `ab -n 5000 -c 50`), la infraestructura mantuvo un rendimiento constante de **~60 Requests Per Second (RPS)** con una saturación de CPU menor al 2%. La topología basada en **AWS ALB** absorbió el tráfico de forma efectiva, previniendo congestiones del servicio web interno.
+
+El vector de **Observabilidad (WPG)** procesa los datos en tiempo real:
+*   **Prometheus** recolecta series temporales del host (`node_exporter`) y CloudWatch (`yace`).
+*   **Grafana** transforma la telemetría métrica en dashboards ejecutivos.
+
+La proactividad recae sobre el **Alertmanager**. Ante cualquier pérdida de "Health status" (`up == 0`), degradación inusual de conectividad o limitación de almacenamiento, se interceptan las criticidades y se cursan mediante un Bot de **Telegram**. Esto asegura una **drástica reducción del MTTR (Mean Time to Repair)** para operaciones 24/7.
 
 ---
-**Desarrollado con ❤️ por Alex Vidal Ródenas para el Grado Superior de ASIR.**  
-*Este proyecto es el resultado de la integración de competencias en redes, sistemas, seguridad y desarrollo web.*
+
+## 6. Disaster Recovery: Almacenamiento Inmutable Segregado
+
+Se confía la estrategia de Continuidad de Negocio a volcados lógicos sobre **Amazon S3** (`tfg-sentinel-backups-alex`). Un pipeline de copias automatizadas vuelca los `data-dumps` en formatos ligeros (`.sql.gz`).
+
+*   **Justificación Arquitectónica:** Aislar por completo la persistencia del estado en un servicio S3 prevé corrupciones sistémicas o *Ransomware* en bloque de recursos computacionales EC2. Respalda la capa TIER-Data cumpliendo el estándar de industria de alta durabilidad AWS (`99.999999999%`).
+
+---
+*Desplegado y orquestado con estándares empresariales en 2026. Proyecto defendido para Ciclo Superior ASIR por Alex Vidal Ródenas.*
