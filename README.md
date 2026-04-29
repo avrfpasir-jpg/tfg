@@ -120,4 +120,45 @@ Se confía la estrategia de Continuidad de Negocio a volcados lógicos sobre **A
 *   **Justificación Arquitectónica:** Aislar por completo la persistencia del estado en un servicio S3 prevé corrupciones sistémicas o *Ransomware* en bloque de recursos computacionales EC2. Respalda la capa TIER-Data cumpliendo el estándar de industria de alta durabilidad AWS (`99.999999999%`).
 
 ---
+
+## 7. Evolución de Arquitectura: Migración a Terraform (IaC)
+
+> [!NOTE]
+> **Roadmap Futuro (Fase 6)**: Actualmente, la instanciación de red y computación se ha desplegado y provisionado combinando bash scripting y la consola de AWS (Click-Ops). La inmediata evolución técnica del proyecto contempla migrar todo el ciclo de vida a **Infraestructura como Código (IaC)** usando HashiCorp Terraform.
+
+Adoptar Terraform eliminará la configuración manual, permitirá el control de versiones de la arquitectura y facilitará la replicabilidad casi instantánea de entornos (Dev/Staging/Prod).
+
+A continuación se muestra un **ejemplo (Draft)** de cómo se estructurará la creación del recurso *Web Node* y el *Security Group* del ALB en el futuro repositorio de estado:
+
+```hcl
+# main.tf (Draft - Sentinel Future Iteration)
+resource "aws_security_group" "alb_sg" {
+  name        = "sentinel-alb-sg"
+  description = "Permite trafico HTTPS entrante de usuarios"
+  vpc_id      = aws_vpc.sentinel_vpc.id
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_instance" "web_node" {
+  ami           = "ami-0c55b159cbfafe1f0" # Amazon Linux 2023
+  instance_type = "t3.micro"
+  subnet_id     = aws_subnet.private_subnet.id
+  
+  # Aprovisionamiento automatizado via Cloud-init
+  user_data = file("infrastructure/automation/scripts/provision_web.sh")
+
+  tags = {
+    Name = "Web-Node-1"
+    Role = "Application"
+  }
+}
+```
+
+---
 *Desplegado y orquestado con estándares empresariales en 2026. Proyecto defendido para Ciclo Superior ASIR por Alex Vidal Ródenas.*
