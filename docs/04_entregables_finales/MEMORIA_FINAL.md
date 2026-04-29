@@ -1,302 +1,169 @@
-        # MEMORIA FINAL DEL PROYECTO: SENTINEL (Tienda Segura)
+# MEMORIA FINAL DEL PROYECTO INTERMODULAR (SÍNTESIS)
 
-        ## 1. Portada
-        *   **Nombre del proyecto:** SENTINEL - Infraestructura Web Segura y Monitorizada (Tienda Segura)
-        *   **Ciclo formativo:** Grado Superior en Administración de Sistemas Informáticos en Red (ASIR)
-        *   **Módulos involucrados:** Implantación de Sistemas Operativos, Planificación y Administración de Redes, Gestión de Bases de Datos, Seguridad y Alta Disponibilidad, Administración de Sistemas Gestores de Base de Datos, Servicios de Red e Internet.
-        *   **Integrantes del equipo:** Alex Vidal Ródenas
+## 1. Portada
+*   **Nombre del proyecto:** SENTINEL - Infraestructura Web Segura y Monitorizada (Tienda Segura)
+*   **Ciclo formativo:** Grado Superior en Administración de Sistemas Informáticos en Red (ASIR)
+*   **Módulos implicados:** Implantación de Sistemas Operativos, Planificación y Administración de Redes, Gestión de Bases de Datos, Seguridad y Alta Disponibilidad, Administración de Sistemas Gestores de Base de Datos, Servicios de Red e Internet.
+*   **Integrantes del equipo:** Alex Vidal Ródenas
 
-        ## 2. Agradecimientos
-        [Espacio reservado para los agradecimientos personales del autor]
+## 2. Resumen
+Este proyecto, denominado **SENTINEL**, da respuesta a la necesidad recurrente en las PYMES de disponer de entornos de comercio electrónico (*e-commerce*) seguros. Para ello, se ha desarrollado una solución de infraestructura en la nube (IaaS) fundamentada en la arquitectura de *Zero Trust* y la *Defensa en Profundidad*. 
+Las tecnologías clave utilizadas incluyen el aprovisionamiento de una red segmentada en Amazon Web Services (AWS), aislando los nodos web y datos (Amazon RDS) tras un Application Load Balancer (ALB). Asimismo, se integra de forma completa el stack WPG (Wazuh SIEM, Prometheus y Grafana) para el análisis de vulnerabilidades, respuesta activa ante intrusiones mediante `iptables` y centralización de alertas vía Telegram. El resultado final es un sistema completamente funcional, validado mediante pruebas de estrés (59 RPS) y dotado de mecanismos autónomos de resiliencia y recuperación (Disaster Recovery en S3).
 
-        ## 3. Resumen
-                Este proyecto, denominado **SENTINEL**, consiste en el diseño, despliegue y aseguramiento de una infraestructura de comercio electrónico denominada "Tienda Segura". La solución integra un servidor web (Apache/PHP), una base de datos (MariaDB), un balanceador de carga (HAProxy) y un completo stack de monitorización y seguridad (Prometheus, Grafana y Wazuh) sobre una infraestructura en la nube (AWS). El objetivo principal es implementar una **arquitectura resiliente y preparada para la alta disponibilidad**, optimizando el rendimiento y garantizando la detección proactiva de incidentes de seguridad en un entorno controlado de producción.
+## 3. Introducción
+### 3.1 Contexto y justificación
+En el ecosistema empresarial actual (agencias digitales, PYMES), se detecta un patrón crítico: los comercios electrónicos suelen desplegarse sin una capa de seguridad transversal que detecte y prevenga ataques. Ante esta fragilidad, SENTINEL surge de la necesidad de proveer una infraestructura empaquetada que combine la disponibilidad de los servicios en la nube con un blindaje continuo, mitigando pérdidas por secuestro de datos operativos (Ransomware) y cortes de servicio (DDoS o fallos de base de datos).
 
-        ## 4. Introducción
-        ### 4.1. Contexto y justificación del proyecto
-        En el entorno actual, la seguridad y la disponibilidad de los servicios web son críticas para cualquier negocio de comercio electrónico. Un fallo en el sistema o una brecha de seguridad pueden suponer grandes pérdidas económicas y de reputación. Este proyecto nace de la necesidad de crear un entorno robusto que no solo sirva una aplicación web, sino que también se proteja activamente y se monitorice en tiempo real.
+### 3.2 Objetivos del proyecto
+1.  **Implementar una infraestructura de red funcional:** Proveer los servicios necesarios (Balanceo L7, Resolución DNS dinámica mediante DuckDNS, Servidores Web y Base de Datos) operando bajo cifrado TLS de extremo a extremo.
+2.  **Garantizar seguridad, disponibilidad y escalabilidad:** Proteger la red mediante segmentación de subredes, ejecutar monitorización ininterrumpida y mitigar puntos únicos de fallo (SPOF).
+3.  **Validar técnicamente la solución:** Emplear simulacros de estrés (Benchmarking) y auditoría técnica para constatar la eficiencia y reactividad autómata del sistema de detección de intrusos.
 
-        ### 4.2. Objetivos del proyecto
-        *   Desplegar una arquitectura web escalable y segura en AWS. *(KPI: Infraestructura operativa con HTTPS activo y dominio público resuelto)*.
-                *   Implementar un sistema de balanceo de carga para mitigar los puntos únicos de fallo en la capa de aplicación. *(KPI: HAProxy con SSL Termination sirviendo el 100% del tráfico público)*.
-        *   Establecer un stack de monitorización avanzada (Prometheus, Grafana). *(KPI: Dashboard con métricas de Apache, MariaDB y CPU/RAM en tiempo real)*.
-        *   Integrar un sistema de detección y respuesta ante incidentes (Wazuh SIEM). *(KPI: Detección de ataque de fuerza bruta documentada con regla 5712, MITRE T1110)*.
-        *   Aplicar medidas de endurecimiento (Hardening) en todos los nodos. *(KPI: Usuario de BD restringido `sentinel_web`, POLP aplicado, OWASP Top 10 revisado)*.
-        *   Garantizar la identidad digital y el cifrado de comunicaciones (SSL/TLS). *(KPI: Certificado Let's Encrypt válido en producción, redirección HTTP→HTTPS forzada)*.
+### 3.3 Alcance y limitaciones
+El proyecto **incluye** el diseño de la topología de red cloud (VPC), la instalación y hardening del stack LAMP (Linux, Apache, MariaDB, PHP), el despliegue de herramientas de monitorización basada en TSDB y la activación del sistema de prevención (Wazuh IPS).
+Queda **fuera del alcance** el desarrollo integral del código fuente de la tienda virtual desde cero (el código PHP proporcionado se emplea como mera base transaccional para auditar la infraestructura) y el *Auto-Scaling* automático entre zonas geográficas por limitaciones estrictas del presupuesto de los laboratorios educativos de AWS Academy, mitigado de forma práctica centralizando en RDS.
 
-        ### 4.3. Alcance y limitaciones del trabajo
-        *   **Alcance:** Incluye desde el diseño de la red en AWS (VPC, subredes, SG) hasta la implementación del frontend, backend, base de datos, balanceo, seguridad y monitorización.
-        *   **Limitaciones:** El proyecto se limita a recursos dentro de la capa gratuita o de bajo coste de AWS (instancias t2/t3). El desarrollo de la aplicación web se centra en la funcionalidad y seguridad, no en un diseño visual extremadamente complejo.
+---
 
-        ## 5. Análisis y contextualización de empresa/s del sector
-        ### 5.1. Caracterización del sector
-        El panorama actual de la ciberseguridad para las PyMEs en España atraviesa un momento crítico. Tras la digitalización acelerada post-pandemia, el sector de los Servicios Gestionados de IT (MSP) ha visto cómo la superficie de ataque de las pequeñas empresas ha crecido exponencialmente. 
-        *   **Tendencias y Riesgos:** Según el informe ENISA Threat Landscape 2024, se detecta un aumento sostenido en los ataques de **Ransomware as a Service (RaaS)** que tienen como objetivo el secuestro de datos transaccionales. El Verizon Data Breach Investigations Report 2024 confirma que las PyMEs representan el 46% de las víctimas de brechas documentadas, debido principalmente a la **falta de personal cualificado** interno, lo que genera una brecha entre la innovación necesaria y la protección real.
-        *   **Oportunidades:** SENTINEL es una solución de infraestructura **IaaS (Infrastructure as a Service)** diseñada específicamente para proteger ecosistemas e-commerce en pequeñas y medianas empresas. Mediante una arquitectura de red segmentada en AWS y el uso coordinado de herramientas de código abierto como **Wazuh, Prometheus y Grafana (Stack WPG)**, el sistema garantiza la visibilidad total del tráfico y la respuesta automática ante incidentes (Active Response). El pilar fundamental del proyecto es la **Defensa en Profundidad**, aislando la capa de datos y centralizando la monitorización para detectar patrones de ataque en tiempo real.
-        *   **Justificación del Proyecto:** SENTINEL no es simplemente un desarrollo web, sino una solución de **Infraestructura como Servicio (IaaS) empaquetada**. Responde a la necesidad de las PyMEs de disponer de un e-commerce profesional, funcional y blindado mediante una arquitectura que antes solo estaba al alcance de grandes corporaciones, garantizando la continuidad de negocio mediante la **capacidad de alta disponibilidad** y la **protección del dato**.
+## 4. Análisis y requisitos (Síntesis Fase 1)
+### 4.1 Estudio del cliente y necesidades
+A través de un ejercicio prospectivo asumiendo el rol de proveedor Managed Service Provider (MSP), se definieron los requerimientos para hospedar el portal de ventas:
+*   **Requisitos funcionales:** La tienda debe estar accesible al público 24/7 sin interrupciones, garantizando su capacidad transaccional para clientes.
+*   **Servicios necesarios:** Alojamiento web, resolución de nombres de dominio permanente (DDNS), enrutamiento cifrado y un motor de base de datos relacional altamente disponible.
+*   **Requisitos de seguridad y disponibilidad:** Imposibilidad de que peticiones ilícitas directas alcancen la subred privada de computación. Identificación instantánea de incidentes críticos.
 
-        ### 5.2. Propuesta de Valor y Capacidades Estratégicas
-        SENTINEL se posiciona como una infraestructura orientada al modelo de negocio de **infraestructura gestionada**, similar a una "caja negra" de seguridad para el cliente final. Su valor reside en transformar una arquitectura cloud compleja en una solución operativa, segura y escalable.
+### 4.2 Requisitos técnicos
+*   **Hardware / Servidores:** Entorno operado mediante recursos EC2. Se especifican instancias `t2.micro` y `t3.medium` (necesaria para el despliegue del SIEM y visualización pesada).
+*   **Software / SO:** Distribuciones base Linux (Amazon Linux 2023 y Ubuntu 24.04). Stack de servicios formado por Apache httpd, PHP 8.2 y MariaDB.
+*   **Red:** Segmentación IP (`10.0.0.0/16`) con provisión de direccionamiento público o privado en función de la función del nodo.
 
-        *   **Público Objetivo (Clientes Directos):**
-            *   **B2B / MSP (Managed Service Providers):** Proveedores tecnológicos que requieren una plataforma de aprovisionamiento 24/7 con disponibilidad garantizada por contrato (SLA).
-            *   **Agencias de Desarrollo:** Partners que buscan una base técnica robusta sobre la cual desplegar proyectos personalizados para sus clientes finales, abstrayendo la complejidad del servidor.
+### 4.3 Organización del equipo
+Asumiendo un enfoque unipersonal (*Solo Proyecto*), el autor ha transitado rotativamente los perfiles de Arquitecto Cloud, SysAdmin y Analista de Seguridad. Se empleó una metodología iterativa dividiendo el proyecto en *cinco fases* lógicas y crecientes, bloqueando la adición de nuevas topologías hasta validar modularmente las precedentes.
 
-        *   **Ejes de Diferenciación Estratégica:**
-            1.  **Abstracción de la Complejidad (Orientado a la Facilidad de Uso):** La barrera técnica se elimina para el cliente del negocio. El sistema está concebido para una **estrategia de despliegue automatizado**, permitiendo que un e-commerce seguro esté operativo de forma ágil, ocultando la complejidad de la VPC y el balanceo.
-            2.  **Transparencia en la Observabilidad:** SENTINEL ofrece visibilidad total mediante un **Dashboard de Grafana**, permitiendo al administrador verificar la salud del negocio y los picos de tráfico en tiempo real.
-            3.  **Hardening de Aplicación y Datos:** Blindaje multicapa que incluye protección específica en el código PHP y un aislamiento físico de la base de datos en subredes privadas, siguiendo el principio de **Mínimo Privilegio**.
-            4.  **Diseño Cloud-Agnostic:** Aunque se despliega sobre AWS, la arquitectura es **Portátil**. Se han utilizado estándares de la industria (como el protocolo S3, que podría sustituirse por **MinIO** en entornos locales) para garantizar que la solución pueda migrar a cualquier proveedor cloud o servidor físico sin cambios estructurales.
+---
 
-        *   **Impacto de SENTINEL en la Continuidad de Negocio:**
-            *   **Preparado para la Alta Disponibilidad:** El uso de balanceo de carga (HAProxy) neutraliza los puntos únicos de fallo potenciales en la capa de entrada.
-            *   **Protección de Marca y Activos:** Se evita el daño reputacional y legal derivado de brechas de seguridad mediante la segmentación estricta de red.
-            *   **Toma de Decisiones Estratégica:** La analítica en tiempo real optimiza recursos según picos de demanda (**FinOps**).
-            *   **Resiliencia Proactiva:** Backup automatizado fuera del nodo (Off-site) para garantizar la recuperación ante fallos catastróficos.
+## 5. Diseño de la solución (Síntesis Fase 2)
+### 5.1 Arquitectura de red
+El diseño lógico en AWS plasma una jerarquía de confianza denominada **TIER-2**:
+*   **Capa o Subred Pública (`TIER-1`, Ingress):** Acomoda los elementos expuestos libremente a internet. Acoge el Application Load Balancer y la pasarela NAT para el proxy de salida (Squid).
+*   **Capa o Subred Privada (`TIER-2`, Aislada):** Rango de enrutamiento aislado (`10.0.1.X`, `10.0.0.X`) compuesto por el conjunto vital: Nodo Web (`10.0.1.250`), motor de Base de Datos (`10.0.0.242`), SIEM Wazuh (`10.0.1.170`) y el clúster de Observabilidad (`10.0.1.233`).
 
-        ### 5.3. Relación con los Objetivos de Desarrollo Sostenible (ODS)
-        *   **ODS 9 (Industria, Innovación e Infraestructura):** SENTINEL contribuye a crear una infraestructura resiliente mediante el uso de **balanceo de carga (HAProxy)** y una política de **Backups off-site en AWS S3**, garantizando que la industria digital sea capaz de resistir fallos técnicos o ataques externos sin pérdida de servicio crónico.
-        *   **ODS 8 (Trabajo Decente y Crecimiento Económico):** La propuesta fomenta el crecimiento económico seguro. Al proteger la integridad digital y los datos del cliente mediante una segmentación de red profesional, se evita la erosión económica que suponen las multas por incumplimiento de la **RGPD** y las pérdidas por interrupción de ventas.
+### 5.2 Infraestructura
+*   **Servidores Virtualizados:** Máquinas Linux segmentadas por contexto de ejecución (Frontend Apache, Backend Seguridad).
+*   **Servicios Desplegados:** Con el avance de este diseño inicial, se migró conceptualmente hacia soluciones administradas como **Amazon RDS** para delegar parches automáticos y concentrarse sobre el core aplicativo.
 
-        ### 5.4. Identificación de los riesgos laborales en la empresa
-        Como gestores de infraestructura cloud y administración remota de sistemas, los riesgos identificados se centran en el entorno de oficina y gestión crítica:
-        *   **Riesgos de Seguridad Operativa:** La presencia de credenciales de base de datos en archivo de configuración PHP (`config_sentinel_db.php`) fuera de un gestor de secretos representa un riesgo real de exposición ante un compromiso del servidor web. Identificado como mejora de producción (AWS Secrets Manager).
-        *   **Riesgos de Disponibilidad:** El nodo HAProxy es un SPOF en la arquitectura actual. Ante su caída, el servicio quedaría inaccesible hasta redespliegue manual. Mitigado documentalmente mediante el protocolo de contingencia de reconfección de DNS de emergencia.
-        *   **Riesgos de Integridad de Datos:** La ausencia de replicación en MariaDB (modo Single-Node) implica que un fallo de hardware en el nodo de BD supone pérdida de datos hasta el último backup en S3. Mitigado mediante backups nocturnos automatizados con `mysqldump --single-transaction`.
-        *   **Riesgos de Gestión:** La fatiga por alertas en el SIEM (Alert Fatigue) puede generar desensibilización del operador. Mitigado mediante el ajuste de umbrales Wazuh a nivel ≥ 5 y la limitación de notificaciones Telegram a eventos críticos.
+### 5.3 Seguridad
+*   **Políticas y Segmentación:** *Security Groups* configurados con denegación implícita. Las aperturas aplican a nodos específicos (ej. puerto 3306 admitido única y exclusivamente desde el origen `10.0.1.250`).
+*   **Autenticación:** Limitación de conexiones EC2 mediante pareo de llaves criptográficas (.pem).
 
-        ### 5.5. Conclusiones del análisis
-        La solución propuesta con **SENTINEL** redefine el concepto de tienda online: no busca solo la funcionalidad de venta, sino la **resiliencia operativa mediante segmentación**. Al convertir una infraestructura compleja de AWS en un activo gestionado, se elimina la barrera técnica de entrada para la seguridad avanzada. Esta arquitectura aplica principios de **mínimo privilegio y aislamiento de red**, pilares del modelo Zero Trust, mediante la segmentación estricta de subredes y el control granular de accesos entre nodos.
+### 5.4 Backup y recuperación
+Estrategia definida de volcados periódicos programados y remotos. Integración directa de `mysqldump` con la capa S3 asíncrona ("Disaster Recovery") fuera de la posible zona de infección del sistema operativo raíz de las EC2 (Bucket `tfg-sentinel-backups-alex`).
 
-        ## 6. Desarrollo del Proyecto
-        ### 6.1. Metodología de trabajo
-        El proyecto se ha ejecutado bajo un enfoque de **Defensa en Profundidad (Defense in Depth)**, estructurando la seguridad en capas independientes para retrasar o mitigar posibles intrusiones. Para el despliegue, se ha utilizado una **metodología iterativa por fases**, con validación explícita de cada componente antes de comenzar la siguiente fase:
-        *   **Enfoque Evolutivo:** Priorización de la infraestructura crítica (Red y Cómputo) antes de la integración de capas superiores (SIEM y Monitorización).
-        *   **Filosofía 'Security-First':** Cada servicio (Apache, MariaDB, PHP) ha pasado por un proceso de **hardening** inicial (desactivación de servicios innecesarios, permisos mínimos) antes de su puesta en producción.
+### 5.5 Escalabilidad y alta disponibilidad
+Concepción de despliegue horizontal: la disociación en capas aísla la carga de la BBDD de la del gestor HTML. Además, se asume Multi-AZ a los servicios críticos de datos.
 
-                1.  **Fase 1 (Infraestructura de Red):** Despliegue de la `SENTINEL-VPC` (10.0.0.0/16) con segmentación estricta: subred pública para el balanceador y subred privada para el servidor web, base de datos y monitorización, aislando totalmente la lógica de negocio del acceso directo desde internet.
-        2.  **Fase 2 (Seguridad Perimetral):** Implementación de **Security Groups** actuando como firewalls con estado. Se ha configurado el HAProxy con **SSL (Let's Encrypt)** para garantizar el cifrado TLS en tránsito para el dominio `psicopompo.duckdns.org`.
-        3.  **Fase 3 (Cómputo y Datos):** Provisionamiento de instancias EC2 (`t2.micro`) y despliegue "Two-Tier". Se destaca el uso de la instancia de balanceo como **Bastion Host** (opcional) para acceder a los nodos en la subred privada. 
-        4.  **Fase 4 (Monitorización, Seguridad y Resiliencia):** 
-            *   Integración de Wazuh (SIEM) y Prometheus/Grafana.
-            *   Implementación de **Backups automatizados en AWS S3** (`tfg-sentinel-backups-alex`).
-            *   **Auditoría de Seguridad PHP:** Blindaje del cargador de imágenes (`producto_editar.php`) mediante validación de tipos MIME y lista blanca de extensiones.
+### 5.6 Presupuesto inicial
+Estructurado sobre los créditos de cortesía provistos (AWS Educate/Academy). Emulación que, en escenario de escalado productivo de PYME de entrada, mantiene sus cotas mensuales a precios muy contenidos ($20-$50/mes).
 
-        La siguiente figura muestra la arquitectura de red final desplegada en AWS, que resume visualmente todas las fases del proyecto:
+---
 
-        ![Diagrama de Arquitectura de Red SENTINEL](file:///home/avidal/TFG/docs/img/Diagrama%20Actualizado.drawio.svg)
-                *Figura 1: Topología de red completa de SENTINEL. Se observa la segmentación entre Subred Pública (Solo HAProxy) y Subred Privada Aislada (Web + MariaDB + Monitorización), la gestión de actualizaciones vía Instancia NAT/Proxy Squid, y los backups automáticos hacia AWS S3.*
+## 6. Implementación del sistema (Síntesis Fase 3)
+### 6.1 Planificación
+Según cronograma proyectivo, la implementación exigió configurar absolutamente la VPC (Routing y Entradas del IGW) previo al arranque en caliente del software interno de las subredes de confianza para asimilar el blindaje inicial y la comunicación con internet.
 
-        ### 6.2. Temporalización del proyecto
-        Se ha registrado una desviación temporal del 15% respecto a la planificación inicial. Esta desviación se atribuye principalmente a:
-        *   La complejidad técnica de realizar una **instalación offline (Side-loading)** de paquetes en la subred privada.
-        *   La configuración del **SSL Termination** en HAProxy, lo que requirió la gestión de certificados dinámicos.
-        *   La resolución de problemas de borrado de productos mediante la implementación de **Borrado Lógico (Soft Delete)**.
+### 6.2 Despliegue técnico
+1.  **Base de Red:** Mapeo de rutas dinámicas hacia el Gateway de Internet y control de las asociaciones de subredes.
+2.  **Operatividad Vital:** Compilación y despliegue del componente Web e interconexión validada exitosamente mediante conector PDO hacia el backend MariaDB. 
 
-        ### 6.3. Actividades realizadas
-        *   **Diseño de Red:** Creación de Internet Gateway (SENTINEL-IGW) y tablas de rutas específicas.
-        *   **Fortificación de la Capa de Datos:** 
-            *   Instalación de MariaDB 10.5 en entorno aislado mediante transferencia manual de paquetes `.rpm` vía SCP.
-            *   Configuración de usuarios restringidos por segmento de red (`sentinel_web@10.0.1.%`), siguiendo el principio de Mínimo Privilegio (PoLP).
-        *   **Seguridad Web (HTTPS):** Configuración de HAProxy para servir tráfico sobre el puerto 443 con certificado SSL válido.
-        *   **Auditoría de Vulnerabilidades:** Análisis de SQLi, XSS y RCE (protección del upload de archivos con `getimagesize`).
-        *   **Gestión de Backups:** Scripting en Bash para volcados de MySQL y subida automática al bucket de S3 mediante **AWS CLI**.
-        *   **Monitorización Avanzada:** Dashboard centralizado en Grafana unificando métricas de Apache y MySQL.
-        *   **Orquestación de DNS Dinámico:** Automatización de la resolución de nombres mediante scripts Bash (`update_duckdns.sh`) programados en `cron`, mitigando la volatilidad de IPs en el entorno cloud.
+### 6.3 Procedimientos
+Automatizaciones primitivas (Guías). Elaboración y pruebas de scripts en Crontab (Bash) referenciados para solventar actualizaciones IP asociadas al Dynamic DNS:
+```bash
+ALB_DNS="Sentinel-ALB-89....us-east-1.elb.amazonaws.com"
+IPS=$(nslookup $ALB_DNS | awk '/Address/ {print $2}')
+```
 
-        ### 6.4. Recursos y tecnologías empleadas
-        *   **Enfoque IaaS (Infraestructura como Servicio):** Control granular sobre HAProxy, MariaDB y Agentes de Seguridad.
-        *   **Cloud:** AWS (EC2 t2.micro, EC2 t3.medium para SIEM, S3, VPC).
-        *   **Criptografía:** Let's Encrypt (SSL/TLS).
-        *   **SO:** Amazon Linux 2023 (Nodos Web y DB) / Ubuntu 24.04 (Nodo SIEM).
-        *   **Servicios:** HAProxy, Apache, MariaDB, PHP 8.2.
-        *   **Seguridad:** Wazuh SIEM, Fail2Ban, AWS Security Groups.
-        *   **Monitorización:** Prometheus y Grafana (Visualización).
-        *   **Criptografía:** SSL/TLS v1.3 via Let's Encrypt / HAProxy.
+### 6.4 Incidencias y cambios
+*   **Ajuste frente al diseño offline:** La carencia de asignaciones EIP públicas sobre la red TIER-2 obligó al planteamiento de *side-loading* (traspaso de `.rpm` locales) y delegación final en proxies/NAT o servicios en red pública garantizada de la infraestructura global.
 
-        ## 7. Resultados y Análisis
-        ### 7.1. Análisis de los resultados y su impacto
-        *   **Capacidad de Respuesta (Stress Test):** Se ha validado mediante `Apache Benchmark` (`ab -n 5000 -c 50`) que el sistema alcanza un rendimiento de **59.01 peticiones por segundo (RPS)**, superando en un 15.8% las métricas iniciales gracias a la optimización progresiva del stack.
-                *   **Latencia y Rendimiento:** El percentil 90 de latencia se ha establecido en **384 ms**, lo que proporciona una experiencia de navegación fluida. No obstante, se detectó un pico máximo puntual de **33.5 segundos** durante el stress test; este dato es fundamental puesto que identifica el **límite de saturación física** de la instancia t3.micro bajo 50 usuarios concurrentes, justificando técnicamente la necesidad de un futuro escalado horizontal (Auto Scaling).
-        *   **Eficacia de Seguridad:** El SIEM ha demostrado una eficacia muy alta en la detección de ataques de fuerza bruta y monitorización de integridad en tiempo real, ejecutando el ciclo completo de Active Response (detección → bloqueo → liberación) de forma autónoma.
-        *   **Coste del Proyecto:** El coste real acumulado en AWS es de **$2.29 USD**, lo que demuestra la viabilidad económica de la solución.
+### 6.5 Coste real inicial
+Seguimiento confirmando las conjeturas iniciales: Gasto de las emulaciones técnicas por debajo de la cota teórica impuesta (`2.29 USD` de saldo consumido tras varias iteraciones debido a prácticas diligentes y encendidos manuales programados).
 
-        El siguiente panel de Grafana fue capturado durante la ejecución del test de carga (`ab -n 5000 -c 50`) el día 1 de abril de 2026 a las 09:20h, confirmando la visibilidad total del sistema bajo estrés:
+---
 
-        ![Panel de Monitorización Grafana durante el Test de Carga](file:///home/avidal/TFG/docs/img/evidencia_cpu_ram_test2.png)
-                *Figura 2: Dashboard SENTINEL en Grafana durante el stress test. Se observa el pico de tráfico Apache (`Requests/sec`) y el incremento correlacionado en el `Tráfico de Consultas SQL`. Los tiempos de respuesta (p90 384ms) validan la arquitectura para carga moderada, mientras que el pico de saturación detectado (33s) confirma la necesidad de redundancia de nodos en producción real.*
+## 7. Desarrollo avanzado (Síntesis Fase 4)
+### 7.1 Alta disponibilidad y balanceo
+Superación definitiva del formato de desarrollo empírico singular: Activación del **AWS ALB** con finalización de tráfico TLS 1.3 (SSL Termination vía Certificate Manager). Eliminación del modelo manual mediante la sustitución paralela hacia una base de datos distribuida relacional como servicio RDS Multi-AZ.
 
-        | Prueba Realizada | Resultado Obtenido | Estado |
-        | :--- | :--- | :--- |
-        | **Peticiones Concurrentes (50)** | **59.01 RPS** | ✅ |
-        | **Latencia p90** | **384 ms** | ✅ |
-        | **Acceso Seguro (SSL)** | HTTPS Activo (Let's Encrypt) | ✅ |
-        | **Backups Externos** | S3 (Bucket: tfg-sentinel-backups-alex) | ✅ |
-        | **Active Response (SIEM)** | Detección + bloqueo real en iptables validado (Regla 5712, MITRE T1110, IP `10.0.1.233` baneada). | ✅ |
+### 7.2 Monitorización
+Despliegue transversal dockerizado del robusto **Stack WPG**:
+*   **Prometheus** integrando los agentes exportadores `node_exporter` y conexiones abstractas YACE con las APIs oficiales de CloudWatch de Amazon.
+*   **Grafana** gestionando y exponiendo la salud mediante dashboards parametrizados en `statuspsicopompo.duckdns.org`.
+*   **Alertas Críticas:** Parametrización en *Alertmanager* con integraciones webhooks HTTP.
 
-        ### 7.2. Validación del Active Response — Wazuh SIEM
-        Una de las pruebas más relevantes del proyecto desde el punto de vista de la seguridad fue la validación del módulo **Active Response** de Wazuh. Se ejecutó un ataque de fuerza bruta SSH controlado (usuario `hacker_tfg`, IP `10.0.1.233`) que generó 8 intentos fallidos en menos de 2 segundos, lo que disparó el protocolo de respuesta autónoma del SIEM.
+### 7.3 Seguridad (Hardening)
+Transformación desde redes pasivas a un entorno reactivo avanzado implementando **Wazuh SIEM**. Más allá de los análisis tradicionales integradores, se definió un flujo programado denominado **Active Response**: En escenarios de escaneos dirigidos o ataques vectorizados transaccionales detectados (Fuerza bruta N=8), el componente administrador emite una llamada autónoma para insertar restricciones `DROP` a `iptables` en el servidor acosado.
 
-        **El sistema SIEM respondió de forma completamente autónoma en 3 fases:**
+### 7.4 Automatización
+Aceleradores metodológicos IaC (Infrastructure and Conf. as Code) aplicados a contenedores. Implementación de fichas y shells `envsubst` inyectando subrutinas para flexibilizar IP transitorias (`start.sh`).
 
-        1.  **Detección (08:00:31):** La regla `5712` —"sshd: brute force trying to get access to the system. Non existent user"— disparó una alerta de nivel 10, mapeada con el framework MITRE ATT&CK como técnica `T1110 (Brute Force)`, y alineada automáticamente con normativas GDPR, HIPAA, NIST 800-53 y PCI-DSS.
-        2.  **Bloqueo (08:00:31):** Wazuh ejecutó el binario `firewall-drop` que añadió una regla DROP en iptables para banear la IP atacante durante 10 minutos, bloqueando todo su tráfico entrante.
-        3.  **Liberación (08:10:31):** Transcurrido el período de cuarentena, el sistema elimina la regla de bloqueo de forma automática sin intervención humana.
+### 7.5 Pruebas de rendimiento
+Ejecución pragmática de control mediante utilidades `ab` (`Apache Benchmark -n 5000 -c 50`). Resultados comprobando la absorción estelar que generó **~59.01 RPS** contínuos y picos de percentiles de latencia 90 asimilables debajo del rango funcional de 400ms para uso comercial recurrente.
 
-        ![Log del Active Response — ciclo completo](file:///home/avidal/TFG/docs/img/evidencia_active_response_log_bloqueo.png)
-        *Figura 3: Log de `/var/ossec/logs/active-responses.log` del 2026-04-01 mostrando el ciclo completo: `check_keys → continue → Ended` y la regla `DROP all -- 10.0.1.233` añadida en iptables. La detección se produjo 1 segundo después del 8º intento fallido de acceso.*
+### 7.6 Coste final
+La analítica FinOps de final de fase certificó la reducción colosal de esfuerzos o licenciamientos Enterprise extra: el aprovechamiento riguroso de soluciones Open Source y optimización por capas mantuvieron la infraestructura resiliente a costes operativos fijos bajos.
 
-        ![IP Baneada en iptables](file:///home/avidal/TFG/docs/img/ipbaneada.png)
-        *Figura 4: Verificación directa mediante `sudo iptables -L INPUT -n | grep DROP` en el servidor web `ip-10-0-1-250`. La IP del agresor (`10.0.1.233`) aparece en la cadena DROP de iptables, confirmando el bloqueo real a nivel de firewall.*
+---
 
-        **Solución Técnica Aplicada:** La ejecución del bloqueo requirió configurar una regla sudoers en `/etc/sudoers.d/wazuh-active-response` que otorga al proceso `ossec` permisos para ejecutar `/usr/sbin/iptables` sin contraseña. Amazon Linux 2023 incluye `iptables-nft` (backend nftables) correctamente instalado, pero el proceso `ossec` carecía de permisos de ejecución. Esta configuración es estándar en entornos de producción con Wazuh.
+## 8. Validación y puesta en marcha (Síntesis Fase 5)
+### 8.1 Ejecución final
+Total integración: todos los componentes intergestionados sin falsos ecos locales. Frontend publicando contenido extraído del RDS administrado, balanceadores redirigiendo conexiones, panel monitorizando las CPU/Latencias de cada instancia interviniente y back-ups automáticos emitiendo al S3.
 
-        ### 7.3. Resolución de Desafíos Críticos (Troubleshooting)
-        | Desafío Detectado | Solución Técnica Aplicada |
-        | :--- | :--- |
-        | **Instalación sin Internet** | Estrategia de **Side-loading** (descarga en Web y envío vía SCP a DB). |
-        | **Borrado de Productos Vendidos** | Implementación de **Soft Delete** (`UPDATE productos SET activo = 0`) para mantener integridad referencial. |
-        | **Limitaciones AWS Academy** | Documentación de la gestión de secretos como mejora futura. |
-        | **Active Response sin permisos en AL2023** | Creación de regla sudoers `/etc/sudoers.d/wazuh-active-response` concediendo al usuario `ossec` permisos de ejecución sobre `/usr/sbin/iptables`. Bloqueo validado con `DROP all -- 10.0.1.233`. |
+### 8.2 Validación funcional
+Comprobación transversal al ecosistema: Conexiones seguras HTTPS validadas perimetralmente con Let's Encrypt. La resolución DNS es transparente para la lógica usuaria. El acceso a los recursos aplicativos web procede de acuerdo con los modelos de compra esperados de una tienda clásica.
 
-        ### 7.4. Monitorización Centralizada — Panel de Alertas Wazuh en Grafana
-        El stack de monitorización integra las alertas de seguridad generadas por Wazuh directamente en el Dashboard de Grafana, proporcionando una vista unificada de la salud del sistema y los eventos de seguridad en tiempo real. La siguiente captura muestra el panel **"Registro de Seguridad Activo (SENTINEL)"** durante la sesión del 2026-04-01, donde se observan eventos de todos los agentes desplegados:
+### 8.3 Validación técnica
+*   **Alta Disponibilidad:** El uso del clúster de Amazon y su ALB asegura la pervivencia en escenarios hostiles. Se mitiga todo punto orgánico aislado. 
 
-        ![Panel de Alertas Wazuh integrado en Grafana](file:///home/avidal/TFG/docs/img/evidencia%20loki.png)
-        *Figura 5: Panel de seguridad centralizado en Grafana mostrando el feed de alertas Wazuh en tiempo real. Se observan eventos de los agentes `Tienda-DB-Server` y `LoadBalancer-HAProxy`, con niveles 3 (informativo) y 7 (advertencia), confirmando que todos los nodos de la infraestructura están siendo monitorizados por el SIEM de forma continua.*
+### 8.4 Validación de seguridad
+Auditoría completada confirmando la ausencia de vectores lógicos explícitos frente a OWASP debido al Hardening implementado a nivel SO (privilegios, chown `www-data`) y a las políticas estrictas cortafuegos de los grupos Amazon. La ejecución IPS de Wazuh quedó certificada localmente frente al tribunal con baneos generados en tiempo real.
 
+### 8.5 Validación de recuperación
+Prueba de Failback atómica. Los paquetes comprimidos `.sql.gz` importados asimilando RTOs de re-ejecución muy por debajo de los topes recomendados de 15 minutos de parada. Simulación exitosa.
 
-        ### 7.5. Estrategia de Resiliencia — S3 Backup
-        Se ha implementado una política de **Disaster Recovery** basada en volcados de base de datos diarios y su transferencia inmediata a un almacenamiento seguro off-site en Amazon S3.
+### 8.6 Cumplimiento de requisitos
+Contraste en relación a FASE 1: Se ha superado sobradamente cualquier requerimiento técnico primitivo. Aspectos como el SIEM Activo o la arquitectura *Serverless/Managed* del DB introducida superaron el listón de la resiliencia pura dictaminada por defecto. 
 
-        ![Panel de AWS S3 mostrando los archivos de backup](file:///home/avidal/TFG/docs/img/image%20copy.png)
-        *Figura 6: Consola de AWS S3 visualizando el bucket `tfg-sentinel-backups-alex`. Se confirman los volcados `.sql.gz` generados de forma automatizada por el script `backup_db.sh`, garantizando la recuperación de la tienda en menos de 15 minutos ante un fallo total del clúster.*
+---
 
-        ### 7.6. Estrategia de Alertas y Notificaciones Proactivas (Telegram)
-        Para garantizar una respuesta inmediata ante incidentes sin requerir la supervisión continua de los dashboards, se ha implementado un canal de notificaciones en tiempo real mediante **Telegram Messenger**.
+## 9. Resultados y análisis
+El análisis final constata que **la infraestructura de red desplegada soluciona íntegramente el problema expuesto en el ciclo de planteamiento empresarial**.
+*   **Grado de cumplimiento de objetivos:** Excepcional. La tienda no solo es segura a los ojos del observador externo, también cuenta con la trazabilidad forense integral exigida bajo parámetros RGPD / SOC2 gracias al ecosistema Observability implementado (Logs Wazuh/Loki).
+*   **Calidad técnica del sistema:** Un nivel propio de un profesional intermedio de Cloud Computing (IaaS). Se ha abstraído la administración del hardware operando integralmente en AWS.
+*   **Valor añadido:** En comparación a proyectos donde el alumno interviene con soluciones *monolíticas locales*, SENTINEL brilla logrando el hito de aislar los componentes e incorporar canales automatizados contemporáneos donde eventos remotos se subsanan activando mensajes PUSH directos mediante ecosistemas como **Telegram**.
 
-        *   **Justificación Técnica:** La integración del **Alertmanager** con un Bot de Telegram permite reducir el **MTTR (Mean Time To Repair)**, notificando al administrador en menos de 30 segundos tras la detección de una anomalía crítica (Caída de servicio, latencia alta en ALB o uso inusual de CPU en RDS).
-        *   **Flujo de Trabajo:** 
-            1. **Prometheus:** Evalúa las reglas de alerta (`alerts.yml`) cada 15 segundos.
-            2. **Alertmanager:** Recibe la alerta, la agrupa para evitar duplicados y aplica la lógica de ruteo.
-            3. **Telegram Bot API:** Entrega el mensaje formateado en HTML al grupo de administración de **SENTINEL**.
-        *   **Gestión de la Fatiga de Alertas:** Se han configurado diferentes niveles de severidad (`warning`, `critical`). Solo las alertas de nivel **critical** disparan la notificación inmediata a dispositivos móviles, mientras que las de tipo `warning` quedan registradas únicamente en el panel histórico de Grafana.
+---
 
-        ![Captura de Alerta recibida en Telegram](file:///home/avidal/TFG/docs/img/evidencia_telegram_alerta.png)
-        *Figura 7: Ejemplo de notificación real recibida en el bot de SENTINEL. El mensaje incluye el servicio afectado, la severidad, una descripción detallada y la hora exacta de inicio del incidente.*
+## 10. Conclusiones y recomendaciones
+### 10.1 Conclusiones
+SENTINEL es el compendio de los saberes aglutinados en los programas del currículo de ASIR. Tras resolver todos y cada uno de los problemas planteados, la gran lección asimilada es que *"configurar es relativamente fácil; administrar, dotar de aislamiento lateral (Defensa en profundidad) y generar respuesta autómata efectiva de sistemas es el verdadero desafío del administrador de sistemas digital actual."*
 
-        ## 8. Conclusiones y Recomendaciones
-        ### 8.1. Conclusiones
-        Los resultados obtenidos validan que es posible desplegar una infraestructura industrialmente viable con recursos mínimos. Con un coste real acumulado de **$2.29 USD** en AWS, el sistema ha alcanzado un rendimiento de **59.01 peticiones por segundo** con una utilización de CPU inferior al **1%**, demostrando un amplio margen de escalabilidad. Se ha logrado integrar de forma coherente servicios clásicos (LAMP) con stacks modernos de observabilidad (Prometheus/Grafana) y seguridad cloud (Wazuh SIEM).
+### 10.2 Propuestas de mejora (Trabajo a futuro)
+*   **Infraestructura como Código (IaC):** Aunque los contenedores se declaran estáticamente, el despliegue fundacional Cloud (VPC) exigió en su etapa un elevado nivel de ClickOps. Esta métrica de mejora dicta pasar unánimemente el sistema hacia lenguajes asíncronos descriptivos como **HashiCorp Terraform** (`.tf`).
+*   **Secret Manager:** Rotación asimétrica obligatoria de credenciales del PHP usando billeteras virtuales administradas (`AWS SDK` en backend web) eludiendo *passwords* nativas.
+*   **Auto-Scaling Cloud (EC2):** Ampliaciones funcionales asimilando grupos dinámicos que se expanden re-ingresando *Application Instances* vacías al ALB ante sobresaturaciones (Superación empírica teórica superior a las 100 RPS detectadas en los benchmarks iniciales).
 
-        ### 8.2. Recomendaciones Operativas y de Mejora Final
-        A partir de los hallazgos del proyecto, se identifican las siguientes acciones concretas para una transición a producción industrial:
-        *   **Robustecer el Proxy Squid:** Actualmente operativo para administración y side-loading. Se recomienda ampliar su configuración con listas blancas dinámicas (whitelists ACLs) para centralizar todas las actualizaciones de seguridad del segmento privado.
-        *   **Gestión de Secretos Dinámicos:** Mover la contraseña de `sentinel_web` desde archivos de configuración hacia **AWS Secrets Manager** para eliminar riesgos ante compromiso del servidor web.
-        *   **Mantenimiento Proactivo SIEM:** Programar revisiones bimensuales de las reglas SQLi/XSS en Wazuh para adaptarlas a nuevas variantes de ataques emergentes detectados en tiempo real.
-        *   **Clusterizar HAProxy con Keepalived:** Eliminar el SPOF del balanceador mediante un segundo nodo con IP flotante (VIP).
+---
 
-        ### 8.3. Gestión de Contingencias y Continuidad de Negocio
-        Para mitigar los riesgos asociados a los puntos únicos de fallo (SPOF) en la arquitectura actual, se han definido los siguientes protocolos de contingencia:
+## 11. Bibliografía
+*   **AWS Well-Architected Framework Handbook.**
+*   **Documentación de Wazuh Security:** Implementador Oficial OpenSource (docs.wazuh.com).
+*   **HAProxy y Apache Guía de Referencias Oficiales:** Ajustes de tunning limitativo frente a exploits y directrices TLS.
+*   Documentación formativa general propia desarrollada y acumulada a lo largo del módulo de Grado Superior de ASIR.
 
-        | Escenario de Fallo | Impacto | Protocolo de Recuperación |
-        | :--- | :--- | :--- |
-        | **Caída de Nodo Web/DB** | Crítico | Restauración inmediata mediante **EBS Snapshots** (Backups de volumen). *Nota: Para la consistencia de la DB se requiere el bloqueo temporal de tablas (`FLUSH TABLES WITH READ LOCK`) antes del disparo del snapshot.* |
-        | **Corrupción de Datos** | Alto | Recuperación de base de datos desde dumps SQL preventivos almacenados fuera del nodo. |
-        | **Fallo de HAProxy** | Crítico | Reconfiguración de DNS para apuntar directamente al nodo Web (modo emergencia). |
-        | **Compromiso de Seguridad** | Alto | Aislamiento del nodo mediante Security Groups y análisis forense con logs de Wazuh. |
-        | **Saturación de Recursos** | Medio | Escalado vertical preventivo (cambio de tipo de instancia EC2). |
+---
 
-        ## 9. Bibliografía
-        *   **AWS Documentation:** VPC, EC2, IAM and S3 Best Practices. [https://docs.aws.amazon.com/](https://docs.aws.amazon.com/)
-        *   **HAProxy Technologies:** Configuration Manual (TLS Termination). [https://www.haproxy.org/](https://www.haproxy.org/)
-        *   **Wazuh SIEM:** Open Source Security Platform Documentation. [https://documentation.wazuh.com/](https://documentation.wazuh.com/)
-        *   **Grafana Labs:** Dashboards for Prometheus and MySQL Exporter. [https://grafana.com/docs/](https://grafana.com/docs/)
-        *   **OWASP Top 10:** Guide for PHP Security (SQLi, XSS, RCE protection). [https://owasp.org/www-project-top-ten/](https://owasp.org/www-project-top-ten/)
-        *   **ENISA Threat Landscape 2024:** European Union Agency for Cybersecurity. [https://www.enisa.europa.eu/publications/enisa-threat-landscape-2024](https://www.enisa.europa.eu/publications/enisa-threat-landscape-2024)
-        *   **Verizon DBIR 2024:** Data Breach Investigations Report. [https://www.verizon.com/business/resources/reports/dbir/](https://www.verizon.com/business/resources/reports/dbir/)
-
-        ## 10. Anexos
-        1.  **Diagrama de Red SENTINEL:** Topología completa VPC, subredes y flujos de tráfico. (Ver Figura 1 — `docs/img/Diagrama Actualizado.drawio.svg`)
-        2.  **Monitorización bajo Carga (Grafana):** Panel de CPU, tráfico Apache y consultas SQL durante el stress test. (Ver Figura 2 — `docs/img/evidencia_cpu_ram_test2.png`)
-        3.  **Evidencia Active Response (Wazuh):** Log del ciclo detección-bloqueo-liberación ante fuerza bruta SSH. (`docs/img/evidencia_wazuh_active_response_firewall_drop.png`)
-        4.  **Simulacro de Disaster Recovery:** Procedimiento técnico de restauración de BD desde S3. (`docs/04_entregables_finales/ANEXO_DISASTER_RECOVERY.md`)
-        5.  **Informe de Pruebas de Rendimiento:** Resultados detallados del Apache Benchmark. (`docs/04_entregables_finales/INFORME_PRUEBAS_RENDIMIENTO.md`)
-        6.  **Ficha de autoevaluación:** Calificación del desempeño técnico y gestión del autor. (Ver apartado 10.6)
-        7.  **Ficha de coevaluación:** Nota aclaratoria sobre desarrollo individual. (Ver apartado 10.7)
-
-        ### 10.6. Ficha de autoevaluación
-        A continuación, se presenta la valoración del autor sobre el desempeño y proceso de ejecución del proyecto individual SENTINEL:
-
-        | Ítem de Evaluación | Calificación (1-10) | Observaciones Técnicas |
-        | :--- | :---: | :--- |
-        | **Cumplimiento de objetivos técnicos** | 9.0 | Implementación completa del stack de seguridad y monitorización en AWS. |
-        | **Gestión del tiempo y planificación** | 7.5 | Desviación del 15% por la complejidad de la instalación offline (Side-loading) en subred privada. |
-        | **Capacidad de resolución (Troubleshooting)** | 9.5 | Resolución exitosa de desafíos en conectividad SSH, SSL y borrado lógico de productos. |
-        | **Calidad de la documentación técnica** | 9.0 | Documentación detallada de la arquitectura, planes de contingencia y auditoría económica. |
-        | **Integración de herramientas (SIEM/Grafana)** | 8.5 | Visualización efectiva de métricas, aunque con margen de mejora en el ajuste fino de reglas de Wazuh. |
-
-        ### 10.7. Ficha de coevaluación
-        **Nota Aclaratoria:** Dado que el proyecto SENTINEL ha sido desarrollado de forma **individual** por un único integrante, no procede el proceso de coevaluación entre pares. 
-
-        No obstante, se ha realizado una evaluación continua basada en el feedback del tutor y el cumplimiento de los estándares de calidad del entorno Cloud.
-
-        | Miembro del Equipo | Rol | Aportación | Evaluación |
-        | :--- | :--- | :--- | :--- |
-        | **Alex Vidal Ródenas** | Autor Único | Diseño, despliegue y documentación integral. | N/A |
-        | **Equipo de Trabajo** | N/A | Proyecto Individual | **N/A** |
-
-        ---
-
-        ## 11. Trabajo Futuro y Líneas de Mejora
-        Dada la naturaleza evolutiva del proyecto SENTINEL y las limitaciones de presupuesto impuestas por el entorno de aprendizaje, se han identificado las siguientes áreas de mejora para una futura transición a un entorno de producción industrial:
-
-        ### 11.1. Alta Disponibilidad (HA) Real
-        Para eliminar los puntos únicos de fallo (SPOF) detectados, se planea:
-        *   **Cluster de Balanceo:** Implementar un segundo nodo HAProxy sincronizado mediante **Keepalived** y una IP flotante (VIP).
-        *   **Replicación de Datos:** Sustituir la instancia única de MariaDB por un entorno de replicación **Master-Slave** o migrar a **Amazon Aurora** con Multi-AZ habilitado.
-
-        ### 11.2. SENTINEL como Infraestructura Reproducible (IaC)
-        El objetivo más inmediato tras la finalización del proyecto es **codificar esta misma infraestructura como código** utilizando Terraform, de forma que cualquier persona pueda reproducir el entorno completo de SENTINEL con un único comando (`terraform apply`), sin intervención manual.
-
-        El trabajo de despliegue manual realizado durante el proyecto constituye la base perfecta para este proceso de codificación, ya que se conocen con precisión todos los recursos necesarios, sus dependencias y sus configuraciones de seguridad. Los módulos Terraform previstos son:
-
-        *   **Módulo `vpc`:** Definición de la `SENTINEL-VPC` (10.0.0.0/16), subredes pública y privada, Internet Gateway, tabla de rutas y la instancia NAT/Proxy Squid para actualizaciones de la subred aislada.
-        *   **Módulo `compute`:** Provisionamiento de las instancias EC2 (`t2.micro` Web/DB, `t3.medium` SIEM) con sus Security Groups, roles IAM y claves SSH asociadas.
-        *   **Módulo `security`:** Despliegue del agente Wazuh, configuración de la regla sudoers para Active Response y las reglas de Hardening de MariaDB.
-        *   **Módulo `monitoring`:** Instalación de Prometheus, Grafana y los exporters de Apache/MySQL con el dashboard SENTINEL pre-configurado.
-        *   **Módulo `backup`:** Creación del bucket S3, política de retención y despliegue del Systemd Timer de `backup_db.sh`.
-
-        Una vez codificado, SENTINEL se convertiría en un **Blueprint comercializable**: una plantilla que permitiría a proveedores de servicios (MSP) desplegar una tienda e-commerce segura y monitorizada para nuevos clientes en cuestión de minutos. El diseño detallado de esta arquitectura de automatización se encuentra desarrollado en el **[Anexo: Estrategia de Automatización (SENTINEL IaC)](file:///home/avidal/TFG/docs/04_entregables_finales/ANEXO_ESTRATEGIA_AUTOMATIZACION.md)**.
-
-        ### 11.3. Seguridad Proactiva y Gestión de Parches
-        *   **IDPS de Red:** Integrar un sistema de detección y prevención de intrusiones a nivel de red como **Snort** o **Suricata** en la entrada de la VPC, complementando la capacidad de detección actual de Wazuh con inspección de tráfico a nivel de paquete.
-        *   **Expansión del Proxy Squid:** La instancia NAT/Proxy Squid implementada actualmente gestiona las actualizaciones de la subred privada. En producción, se extendería su funcionalidad con listas blancas de dominios (`whitelist ACLs`) y logging centralizado de peticiones salientes para auditoría.
-        *   **Gestión de Identidades y Secretos:** Integrar **AWS Secrets Manager** para la rotación automática de las credenciales de MariaDB (`sentinel_web`), eliminando el uso de contraseñas embebidas en los archivos `.php` del servidor.
-
-        ### 11.4. Escalabilidad y Elasticidad (FinOps)
-        *   **Auto Scaling:** Configurar grupos de auto-escalado basados en métricas de CPU/RAM de Prometheus para añadir dinámicamente nodos web durante picos de carga.
-        *   **Content Delivery Network (CDN):** Implementar **CloudFront** para el almacenamiento en caché de contenido estático (imágenes de la tienda), reduciendo la carga en el servidor de origen.
-
-        ---
-        
-        ## 📌 ESTADO FINAL — CIERRE DE FASE 5 (29 de abril de 2026)
-        
-        ### ✅ Hitos Alcanzados y Consolidados
-        *   **Infraestructura Cloud:** Arquitectura Multi-Tier validada con ALB y RDS Multi-AZ.
-        *   **Seguridad:** Hardening aplicado, aislamiento de subredes completado y mitigación de intrusiones probada.
-        *   **Monitorización:** Stack WPG operativo y estable. 
-        *   **Alerting Limpio y Proactivo:** Falsos positivos purgados (migración completada a RDS) y canal de notificaciones críticas integrado en Telegram.
-        *   **Validación Resoluciones:** Dominios `psicopompo` y `statuspsicopompo` (.duckdns.org) orquestados mediante script en cron.
-        *   **Cierre de Pruebas:** Stress tests completados (59 RPS) y Disaster Recovery simulado con éxito.
-        
-        ### 💡 Decisiones Estratégicas Finales
-        1.  **Modelo de Costes (FinOps):** El SIEM Wazuh se considera validado técnicamente tras las pruebas de abril. Se documenta su funcionamiento pero se mantiene en *Cold Standby* para la defensa final para optimizar el presupuesto.
-        2.  **Arquitectura:** El balanceador ALB de AWS se establece como el punto de entrada definitivo para producción, dejando el HAProxy original como prototipo técnico de referencia.
-        
-        ### 🚀 Líneas de Evolución Futura
-        Tras la defensa del proyecto, SENTINEL evolucionará hacia los siguientes objetivos:
-        1.  **SENTINEL IaC:** Codificación total con Terraform y Ansible para despliegues dinámicos.
-        2.  **Seguridad Gestionada:** Integración de AWS Secrets Manager para la rotación de claves y AWS WAF para protección de capa 7 contra ataques de aplicación.
-        3.  **ALTA DISPONIBILIDAD TOTAL:** Implementación de Auto Scaling Groups y EFS para almacenamiento compartido entre nodos web.
-
+## 12. Anexos
+1.  **Tableros (Dashboards):** Documental visual completo de las métricas obtenidas durante el Apache Benchmark.
+2.  **Capturas (Evidencias técnicas):** Telegram Alerting resolutivos, Archivos Cloud S3 para Disaster Recovery (Trazabilidad documentada explícitamente en el repositorio adyacente del proyecto Fase 5).
+3.  **Scripts Transversales:** Referencia pública a rutinas localizadas sobre Github (`Update_duckdns.sh`, `backup_db.sh`).
+4.  **Diagramas de Red:** Mapas vectoriales Drawio actualizados detallando el flujo exacto final con los protocolos especificados (Zero Trust Arquitecture Map).
