@@ -8,19 +8,19 @@
 
 ## 2. Resumen
 Este proyecto, denominado **SENTINEL**, da respuesta a la necesidad recurrente en las PYMES de disponer de entornos de comercio electrónico (*e-commerce*) seguros. Para ello, se ha desarrollado una solución de infraestructura en la nube (IaaS) fundamentada en la arquitectura de *Zero Trust* y la *Defensa en Profundidad*. 
-Las tecnologías clave utilizadas incluyen el aprovisionamiento de una red segmentada en Amazon Web Services (AWS), aislando los nodos web y datos (Amazon RDS) tras un Application Load Balancer (ALB). Asimismo, se integra de forma completa el stack WPG (Wazuh SIEM, Prometheus y Grafana) para el análisis de vulnerabilidades, respuesta activa ante intrusiones mediante `iptables` y centralización de alertas vía Telegram. El resultado final es un sistema completamente funcional, validado mediante pruebas de estrés (59 RPS) y dotado de mecanismos autónomos de resiliencia y recuperación (Disaster Recovery en S3).
+Las tecnologías clave utilizadas incluyen el aprovisionamiento de una red segmentada en Amazon Web Services (AWS), aislando los nodos web y datos (Amazon RDS) tras un Application Load Balancer (ALB). Asimismo, se integra de forma completa el stack WPG (Wazuh SIEM, Prometheus y Grafana) para el análisis de vulnerabilidades, respuesta activa ante intrusiones mediante `iptables` y centralización de alertas vía Telegram. El resultado final es un sistema completamente funcional, validado mediante pruebas de estrés (59 RPS) y dotado de mecanismos de resiliencia planificada (*Backup & Restore* automatizado externalizado en S3 asegurando cuotas RTO operativas).
 
 ## 3. Introducción
 ### 3.1 Contexto y justificación
 En el ecosistema empresarial actual (agencias digitales, PYMES), se detecta un patrón crítico: los comercios electrónicos suelen desplegarse sin una capa de seguridad transversal que detecte y prevenga ataques. Ante esta fragilidad, SENTINEL surge de la necesidad de proveer una infraestructura empaquetada que combine la disponibilidad de los servicios en la nube con un blindaje continuo, mitigando pérdidas por secuestro de datos operativos (Ransomware) y cortes de servicio (DDoS o fallos de base de datos).
 
 ### 3.2 Objetivos del proyecto
-1.  **Implementar una infraestructura de red funcional:** Proveer los servicios necesarios (Balanceo L7, Resolución DNS dinámica mediante DuckDNS, Servidores Web y Base de Datos) operando bajo cifrado TLS de extremo a extremo.
-2.  **Garantizar seguridad, disponibilidad y escalabilidad:** Proteger la red mediante segmentación de subredes, ejecutar monitorización ininterrumpida y mitigar puntos únicos de fallo (SPOF).
+1.  **Implementar una infraestructura de red funcional:** Proveer los servicios necesarios (Balanceo L7, Resolución DNS dinámica mediante DuckDNS, Servidores Web y Base de Datos) operando bajo la delegación de cifrado (SSL Termination) en la frontera de la VPC mediante el Application Load Balancer.
+2.  **Garantizar seguridad, disponibilidad y escalabilidad:** Proteger la red mediante segmentación estricta de subredes, aislar la monitorización, y mitigar el Punto Único de Fallo (SPOF) crítico de la capa de persistencia migrando íntegramente a Amazon RDS Multi-AZ, sentando con ello una base *stateless* preparada para auto-escalado web.
 3.  **Validar técnicamente la solución:** Emplear simulacros de estrés (Benchmarking) y auditoría técnica para constatar la eficiencia y reactividad autómata del sistema de detección de intrusos.
 
 ### 3.3 Alcance y limitaciones
-El proyecto **incluye** el diseño de la topología de red cloud (VPC), la instalación y hardening del stack LAMP (Linux, Apache, MariaDB, PHP), el despliegue de herramientas de monitorización basada en TSDB y la activación del sistema de prevención (Wazuh IPS).
+El proyecto **incluye** el diseño de la topología de red cloud (VPC), la instalación y fortificación formal ("Hardening") del stack LAMP —aplicando directrices de Mínimo Privilegio restrictivo en SO, inyección de variables transitorias PDO en vez de contraseñas impresas y mitigaciones de enumeración en Apache—, el despliegue de herramientas de monitorización basada en TSDB y la activación del sistema de prevención activa (Wazuh IPS).
 Queda **fuera del alcance** el desarrollo integral del código fuente de la tienda virtual desde cero (el código PHP proporcionado se emplea como mera base transaccional para auditar la infraestructura) y el *Auto-Scaling* automático entre zonas geográficas por limitaciones estrictas del presupuesto de los laboratorios educativos de AWS Academy, mitigado de forma práctica centralizando en RDS.
 
 ---
@@ -60,7 +60,7 @@ El diseño lógico en AWS plasma una jerarquía de confianza denominada **TIER-2
 *   **Autenticación:** Limitación de conexiones EC2 mediante pareo de llaves criptográficas (.pem).
 
 ### 5.4 Backup y recuperación
-Estrategia definida de volcados periódicos programados y remotos. Integración directa de `mysqldump` con la capa S3 asíncrona ("Disaster Recovery") fuera de la posible zona de infección del sistema operativo raíz de las EC2 (Bucket `tfg-sentinel-backups-alex`).
+Estrategia definida de volcados periódicos programados y remotos. Integración directa de volcados de datos compactados con envío síncrono al ecosistema S3 off-site. Esto conforma un plan de contingencia pasivo de tipo "Backup and Restore" fuera de la posible zona de infección por secuestro de la instancia (Bucket `tfg-sentinel-backups-alex`), capaz de avalar tiempos de recuperación (RTO - Recovery Time Objective) calculados operativamente en menos de 30 minutos frente a caídas masivas de la capa de datos.
 
 ### 5.5 Escalabilidad y alta disponibilidad
 Concepción de despliegue horizontal: la disociación en capas aísla la carga de la BBDD de la del gestor HTML. Además, se asume Multi-AZ a los servicios críticos de datos.
