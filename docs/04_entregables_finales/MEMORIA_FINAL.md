@@ -48,6 +48,9 @@ El diseño lógico en AWS plasma una jerarquía de confianza denominada **TIER-2
 *   **Capa o Subred Pública (`TIER-1`, Ingress):** Acomoda los elementos expuestos libremente a internet. Acoge el Application Load Balancer y la pasarela NAT para el proxy de salida (Squid).
 *   **Capa o Subred Privada (`TIER-2`, Aislada):** Rango de enrutamiento aislado (`10.0.1.X`, `10.0.0.X`) compuesto por el conjunto vital: Nodo Web (`10.0.1.250`), motor de Base de Datos (`10.0.0.242`), SIEM Wazuh (`10.0.1.170`) y el clúster de Observabilidad (`10.0.1.233`).
 
+![Diagrama de Arquitectura de Red SENTINEL](docs/img/diagramaFInal.drawio.png)
+*Figura 1: Topología de red completa de SENTINEL, mostrando la segmentación estricta entre la Subred Pública (Load Balancer proxy HTTP/S) y la Subred Privada aislada (Web, RDS, Monitorización y SIEM).*
+
 ### 5.2 Infraestructura
 *   **Servidores Virtualizados:** Máquinas Linux segmentadas por contexto de ejecución (Frontend Apache, Backend Seguridad).
 *   **Servicios Desplegados:** Con el avance de este diseño inicial, se migró conceptualmente hacia soluciones administradas como **Amazon RDS** para delegar parches automáticos y concentrarse sobre el core aplicativo.
@@ -103,11 +106,17 @@ Despliegue transversal dockerizado del robusto **Stack WPG**:
 ### 7.3 Seguridad (Hardening)
 Transformación desde redes pasivas a un entorno reactivo avanzado implementando **Wazuh SIEM**. Más allá de los análisis tradicionales integradores, se definió un flujo programado denominado **Active Response**: En escenarios de escaneos dirigidos o ataques vectorizados transaccionales detectados (Fuerza bruta N=8), el componente administrador emite una llamada autónoma para insertar restricciones `DROP` a `iptables` en el servidor acosado.
 
+![Evidencia bloqueo iptables originado por Wazuh](docs/img/ipbaneada.png)
+*Figura 2: Verificación directa mediante `iptables -L` en el nodo aplicativo web. Se constata la regla `DROP` contra la IP atacante añadida de forma absolutamente automatizada por el SIEM (Wazuh Active Response) sin requerir de ninguna intervención manual.*
+
 ### 7.4 Automatización
 Aceleradores metodológicos IaC (Infrastructure and Conf. as Code) aplicados a contenedores. Implementación de fichas y shells `envsubst` inyectando subrutinas para flexibilizar IP transitorias (`start.sh`).
 
 ### 7.5 Pruebas de rendimiento
 Ejecución pragmática de control mediante utilidades `ab` (`Apache Benchmark -n 5000 -c 50`). Resultados comprobando la absorción estelar que generó **~59.01 RPS** contínuos y picos de percentiles de latencia 90 asimilables debajo del rango funcional de 400ms para uso comercial recurrente.
+
+![Panel Grafana durante estrés](docs/img/grafana monitoring.png)
+*Figura 3: Dashboard Ejecutivo SENTINEL en Grafana. Despliega en vivo la telemetría métrica asimilada durante el estrés de carga, certificando el funcionamiento transversal fluido entre los exporters pasivos y el servidor TSDB.*
 
 ### 7.6 Coste final
 La analítica FinOps de final de fase certificó la reducción colosal de esfuerzos o licenciamientos Enterprise extra: el aprovechamiento riguroso de soluciones Open Source y optimización por capas mantuvieron la infraestructura resiliente a costes operativos fijos bajos.
@@ -126,6 +135,9 @@ Comprobación transversal al ecosistema: Conexiones seguras HTTPS validadas peri
 
 ### 8.4 Validación de seguridad
 Auditoría completada confirmando la ausencia de vectores lógicos explícitos frente a OWASP debido al Hardening implementado a nivel SO (privilegios, chown `www-data`) y a las políticas estrictas cortafuegos de los grupos Amazon. La ejecución IPS de Wazuh quedó certificada localmente frente al tribunal con baneos generados en tiempo real.
+
+![Flujo de notificaciones Telegram](docs/img/evidencia_telegram_alerta_1.jpg)
+*Figura 4: Notificación Push vía integración de Alertmanager con el bot de API de Telegram. Reporta de forma instantánea un incidente de "ServerOffline" a los dispositivos móviles de los administradores.*
 
 ### 8.5 Validación de recuperación
 Prueba de Failback atómica. Los paquetes comprimidos `.sql.gz` importados asimilando RTOs de re-ejecución muy por debajo de los topes recomendados de 15 minutos de parada. Simulación exitosa.
@@ -163,7 +175,10 @@ SENTINEL es el compendio de los saberes aglutinados en los programas del curríc
 ---
 
 ## 12. Anexos
-1.  **Tableros (Dashboards):** Documental visual completo de las métricas obtenidas durante el Apache Benchmark.
-2.  **Capturas (Evidencias técnicas):** Telegram Alerting resolutivos, Archivos Cloud S3 para Disaster Recovery (Trazabilidad documentada explícitamente en el repositorio adyacente del proyecto Fase 5).
-3.  **Scripts Transversales:** Referencia pública a rutinas localizadas sobre Github (`Update_duckdns.sh`, `backup_db.sh`).
-4.  **Diagramas de Red:** Mapas vectoriales Drawio actualizados detallando el flujo exacto final con los protocolos especificados (Zero Trust Arquitecture Map).
+1.  **Evaluaciones / Fichas de Control:**
+    *   *Ficha de autoevaluación:* Autoevaluación técnica calificada de Excelente sustentada en la superación de métricas de despliegue, Troubleshooting asíncrono (Dificultades Side-loading / NAT) y la inserción voluntaria de mitigaciones avanzadas SIEM no requeridas pero indispensables.
+    *   *Ficha de coevaluación:* N/A (Desarrollo unipersonal bajo supervisión analítica de tutoría docente).
+2.  **Tableros (Dashboards):** Documental visual de las métricas obtenidas durante el Apache Benchmark *[Ver Figura 3]*.
+3.  **Capturas (Evidencias técnicas):** Operaciones Telegram Alerting resolutivas *[Ver Figura 4]* y barreras IPS perimetrales activas *[Ver Figura 2]*.
+4.  **Scripts Transversales:** Referencia a rutinas localizadas sobre Github (`Update_duckdns.sh`, `start.sh`, `backup_db.sh`).
+5.  **Diagramas de Red:** Arquitectura TIER-2 final *[Ver Figura 1]*.
