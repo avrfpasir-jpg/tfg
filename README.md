@@ -26,7 +26,7 @@ La arquitectura descansa sobre una nube privada virtual (**VPC `10.0.0.0/16`**) 
 | :--- | :--- | :--- | :--- |
 | **Sentinel-ALB** | Balanceador L7 & SSL Termination | Dinámica | Público (`psicopompo.duckdns.org`) |
 | **Squid Proxy** | NAT Gateway / Pasarela de Salida | N/A | Público (Outbound traffic only) |
-| **Web-Node-1** | Aplicación: Apache/PHP 8.2 | `10.0.1.250` | Privado |
+| **Web-Node-1** | Aplicación: Apache/PHP 8.4 | `10.0.1.250` | Privado |
 | **Sentinel-DB** | Base de Datos: Amazon RDS (MariaDB) | `10.0.0.242` | Privado |
 | **Wazuh-Manager**| SIEM Security Hub | `10.0.1.170` | Privado |
 | **Sentinel-Mon**| Stack Observabilidad (WPG) | `10.0.1.233` | Privado/Público (`statuspsicopompo...`) |

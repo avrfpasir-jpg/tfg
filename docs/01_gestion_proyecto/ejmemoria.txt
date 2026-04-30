@@ -1,0 +1,200 @@
+Ejemplo de Indice para el Proyecto
+Requisits de compleció
+MEMORIA FINAL DEL PROYECTO INTERMODULAR (SÍNTESIS)
+
+1. Portada
+
+Nombre del proyecto
+Ciclo formativo y módulos implicados
+Integrantes del equipo
+ 
+
+2. Resumen
+
+Breve síntesis del proyecto (10–15 líneas):
+
+Problema planteado
+Solución desarrollada (infraestructura de red)
+Tecnologías clave
+Resultado final (sistema funcional, seguro y validado)
+ 
+
+3. Introducción
+
+3.1 Contexto y justificación
+
+Síntesis del análisis inicial del cliente y sus necesidades detectadas en la Fase 1
+
+Tipo de empresa
+Problemas detectados
+Necesidad de infraestructura
+3.2 Objetivos del proyecto
+
+Implementar una infraestructura de red funcional
+Garantizar seguridad, disponibilidad y escalabilidad
+Validar técnicamente la solución
+3.3 Alcance y limitaciones
+
+Qué incluye el proyecto (red, servicios, seguridad, monitorización…)
+Qué queda fuera o limitado (simulación, recursos, tiempo…)
+ 
+
+4. Análisis y requisitos (Síntesis Fase 1)
+
+4.1 Estudio del cliente y necesidades
+
+Resumen de:
+
+Requisitos funcionales y técnicos
+Servicios necesarios (DNS, DHCP, VPN, etc.)
+Requisitos de seguridad y disponibilidad
+4.2 Requisitos técnicos
+
+Hardware necesario
+Software y sistemas operativos
+Red y direccionamiento
+4.3 Organización del equipo
+
+Roles asignados (PM, sysadmin, seguridad, etc.)
+Metodología de trabajo (Kanban, backlog…)
+ 
+
+5. Diseño de la solución (Síntesis Fase 2)
+
+5.1 Arquitectura de red
+
+Topología (lógica y física)
+VLANs, subredes y direccionamiento
+5.2 Infraestructura
+
+Servidores y virtualización
+Servicios desplegados
+5.3 Seguridad
+
+Políticas básicas
+Firewall, autenticación, segmentación
+5.4 Backup y recuperación
+
+Estrategia aplicada (3-2-1, etc.)
+5.5 Escalabilidad y alta disponibilidad
+
+Previsión de crecimiento
+Redundancia planteada
+5.6 Presupuesto inicial
+
+Resumen económico del diseño
+
+ 
+
+6. Implementación del sistema (Síntesis Fase 3)
+
+6.1 Planificación
+
+Cronograma (Gantt)
+Recursos utilizados
+6.2 Despliegue técnico
+
+Instalación de servidores
+Configuración de red
+Servicios básicos funcionando
+6.3 Procedimientos
+
+Guías de instalación
+Scripts y automatización básica
+6.4 Incidencias y cambios
+
+Problemas encontrados
+Ajustes respecto al diseño
+6.5 Coste real inicial
+
+Comparativa con el presupuesto
+
+ 
+
+7. Desarrollo avanzado (Síntesis Fase 4)
+
+7.1 Alta disponibilidad y balanceo
+
+Clústeres / redundancia
+Balanceadores
+7.2 Monitorización
+
+Herramientas (Zabbix, Prometheus…)
+Alertas
+7.3 Seguridad (Hardening)
+
+Medidas aplicadas
+Auditorías
+7.4 Automatización
+
+Scripts / IaC
+7.5 Pruebas de rendimiento
+
+Resultados de stress testing
+7.6 Coste final
+
+Comparativa global
+
+ 
+
+8. Validación y puesta en marcha (Síntesis Fase 5)
+
+8.1 Ejecución final
+
+Sistema completamente operativo
+Integración de todos los servicios
+8.2 Validación funcional
+
+Acceso a servicios
+Conectividad
+8.3 Validación técnica
+
+Rendimiento
+Alta disponibilidad
+8.4 Validación de seguridad
+
+Vulnerabilidades
+Políticas aplicadas
+8.5 Validación de recuperación
+
+Backups
+Failover
+8.6 Cumplimiento de requisitos
+
+Comparación con Fase 1
+
+ 
+
+9. Resultados y análisis
+
+Grado de cumplimiento de objetivos
+Calidad técnica del sistema
+Valor añadido del proyecto
+ 
+
+10. Conclusiones y recomendaciones
+
+10.1 Conclusiones
+
+Qué se ha conseguido
+Qué ha funcionado mejor
+10.2 Propuestas de mejora
+
+Escalabilidad futura
+Mejoras técnicas
+Nuevas funcionalidades
+ 
+
+11. Bibliografía
+
+Fuentes técnicas
+Documentación utilizada
+ 
+
+12. Anexos
+
+Diagramas de red
+Capturas
+Scripts
+Evidencias
+Evaluaciones

@@ -1,6 +1,6 @@
 # 🚀 Informe de Ejecución y Validación Final - Fase 5
 **Proyecto:** SENTINEL (Infraestructura Web Segura)  
-**Fecha:** 28 de abril de 2026  
+**Fecha:** 30 de abril de 2026  
 **Responsable:** Alex Vidal Ródenas  
 
 ---
@@ -13,10 +13,12 @@ Tras la consolidación del despliegue en AWS, la infraestructura operativa se co
 | :--- | :--- | :--- | :--- | :--- |
 | **Sentinel-ALB** | Balanceador L7 | N/A | `psicopompo.duckdns.org` | ✅ Operativo (HTTP/HTTPS) |
 | **Squid Proxy** | NAT Salida | N/A | Público | ✅ Operativo |
-| **Web-Node-1** | Apache/PHP 8.5 | `10.0.1.250` | `13.220.133.172` | ✅ Operativo |
+| **Web-Node-1** | Apache/PHP 8.4 | `10.0.1.250` | `13.220.133.172` ¹ | ✅ Operativo |
 | **Sentinel-Monitoring** | Grafana/Prometheus | `10.0.1.233` | `statuspsicopompo.duckdns.org` | ✅ Operativo |
-| **Sentinel-DB (RDS)** | MariaDB (Multi-AZ) | `10.0.0.242` | `database-sentinel...` | ✅ Operativo |
+| **Sentinel-DB (RDS)** | MariaDB (Single-AZ, Multi-AZ Ready) | `10.0.0.242` | `database-sentinel...` | ✅ Operativo |
 | **Wazuh-Manager** | SIEM / Seguridad | `10.0.1.170` | `54.145.224.168` | ✅ Operativo |
+
+> ¹ El nodo Web tiene IP pública asignada por AWS, pero el Security Group asociado únicamente permite tráfico entrante desde el Security Group del ALB (puerto 80). El acceso directo desde internet queda bloqueado a nivel de Security Group, garantizando que todo el tráfico de usuarios pase obligatoriamente por el balanceador y su terminación TLS.
 
 ---
 
@@ -37,9 +39,9 @@ Se detectó un fallo crítico en el despliegue inicial donde el contenedor `aler
 *   Se ha verificado la integridad de las tablas y la capacidad de servir productos dinámicamente en la tienda.
 
 ### 2.4 Validación SSL/TLS (Seguridad en Tránsito)
-Se ha corregido el problema del Listener del ALB. 
-*   **Acción:** Se ha vinculado correctamente el certificado ACM (Amazon Certificate Manager) y se ha forzado la redirección de HTTP (80) a HTTPS (443).
-*   **Resultado:** Conexión segura validada con cifrado TLS 1.3.
+Se ha corregido el problema del Listener del ALB.
+*   **Acción:** Se ha importado el certificado TLS (emitido por **Let's Encrypt**, CA intermediaria E7) en **ACM (Amazon Certificate Manager)** y se ha vinculado al Listener HTTPS del ALB, forzando la redirección de HTTP (80) a HTTPS (443).
+*   **Resultado:** Conexión segura validada con cifrado **TLS 1.2/1.3**. El certificado cubre el dominio `psicopompo.duckdns.org` y es válido hasta el 18 de junio de 2026.
 
 ### 2.5 Validación del SIEM (Wazuh)
 El nodo manager ya es alcanzable y está procesando eventos de los agentes.
@@ -62,6 +64,12 @@ La instancia ha sido reiniciada y se ha verificado que la IP pública es persist
 
 ### 3.2 Resolución: Configuración HTTPS
 El ALB ya sirve contenido seguro. Los Health Checks en el puerto 443 pasan a estado "Healthy", permitiendo el flujo de tráfico cifrado de extremo a extremo.
+
+### 3.3 Resolución: Falso Positivo de Active Response en IP Interna
+Durante las pruebas de validación, el motor de Active Response ejecutó una regla `firewall-drop` contra `10.0.1.233` (Sentinel-Monitoring), clasificando el tráfico de scraping de Prometheus como actividad anómala.
+*   **Causa:** El agente Wazuh en Web-Node-1 detectó un patrón de peticiones repetitivas desde la IP del servidor de monitorización sin estar en la lista de exclusión.
+*   **Acción:** Se añadió `10.0.1.233` a la `white_list` de Active Response en `ossec.conf`, junto con el resto de IPs del tier privado (`10.0.1.170`, `10.0.0.242`).
+*   **Resultado:** El falso positivo no se reproduce. El scraping de métricas opera sin interrupciones.
 
 ---
 

@@ -1,0 +1,130 @@
+Duración total: 12 min
+Nº diapositivas ideal: 10–12
+Regla clave: 1 idea clara por diapositiva
+1. PORTADA (30 seg)
+
+Nombre del proyecto
+Equipo
+Ciclo / módulos
+ 
+
+2. CONTEXTO Y OBJETIVOS DEL PROYECTO (1 minuto)
+
+Empresa / caso planteado
+Problema detectado
+Necesidad de infraestructura
+Objetivo general
+3–4 objetivos técnicos clave:
+Seguridad
+Disponibilidad
+Escalabilidad
+Requisitos técnicos
+Requisitos de seguridad
+ 
+
+🎯 Clave: que se entienda por qué existe el proyecto
+
+ 
+
+ 
+
+3. DISEÑO DE LA SOLUCIÓN (1 min)
+
+👉 (Fase 2)
+
+Arquitectura de red (diagrama)
+VLANs / subredes
+Componentes principales
+🎯 ESTA ES UNA DIAPO CLAVE
+👉 Deben enseñar un diagrama claro
+
+ 
+
+4. TECNOLOGÍAS UTILIZADAS (30 seg)
+
+Sistemas operativos
+Servicios de red
+Herramientas (monitorización, virtualización…)
+🎯 Aquí se ve la relación con módulos:
+
+SSOO
+Redes
+Seguridad
+BBDD
+ 
+
+5. IMPLEMENTACIÓN (3 min)
+
+👉 (Fase 3)
+
+Qué se ha desplegado realmente
+Evidencias (capturas):
+servidores funcionando
+red operativa
+servicios activos
+🎯 IMPORTANTE: demostrar que funciona
+
+ 
+
+6. MEJORAS AVANZADAS (2 min)
+
+👉 (Fase 4)
+
+Alta disponibilidad
+Monitorización
+Hardening
+Automatización
+🎯 Aquí se diferencia un grupo normal de uno bueno
+
+ 
+
+7. VALIDACIÓN Y PRUEBAS (2 min)
+
+👉 (Fase 5)
+
+Pruebas realizadas:
+conectividad
+rendimiento
+seguridad
+Resultados obtenidos
+🎯 No decir “funciona”, sino demostrarlo
+
+ 
+
+8. RESULTADOS FINALES (30 seg)
+
+Qué se ha conseguido
+Nivel de cumplimiento de objetivos
+🎯 Mensaje claro: “hemos resuelto el problema inicial”
+
+ 
+
+9. DIFICULTADES Y SOLUCIONES (1 min)
+
+Problemas importantes
+Cómo los resolvieron
+🎯 Muy valorable a nivel docente
+
+ 
+
+10. CONCLUSIONES Y MEJORAS FUTURAS (1 min)
+
+Qué han aprendido
+Qué mejorarían
+Posibles ampliaciones
+ 
+
+❌ ERRORES TÍPICOS
+
+Leer diapositivas
+Meter demasiado texto
+Explicar teoría en lugar de SU proyecto
+No enseñar evidencias
+ 
+
+✅ LO QUE DEBE HACER
+
+Usar diagramas y capturas reales
+Explicar con lenguaje sencillo
+Repartir la presentación entre miembros
+Ensayar (MUY importante para 15 min)

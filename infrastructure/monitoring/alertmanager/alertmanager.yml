@@ -24,8 +24,8 @@ route:
 receivers:
   - name: 'telegram-admin'
     telegram_configs:
-      - bot_token: '8054315854:AAHUDCRz0QyucnXoGQi-eai5eb3bY-6FEeI'
-        chat_id: 8798461982
+      - bot_token: '${TELEGRAM_BOT_TOKEN}'
+        chat_id: ${TELEGRAM_CHAT_ID}
         send_resolved: true
         parse_mode: 'HTML'
         message: |
